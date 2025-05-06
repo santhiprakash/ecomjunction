@@ -38,9 +38,15 @@ export default function Index() {
             </div>
           </div>
           
+          {/* Changed layout: First show filters at top */}
+          <div className="w-full">
+            <ProductFilters />
+          </div>
+          
+          {/* Then show products grid with sidebar for additional filters */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div className="md:col-span-1">
-              <ProductFilters />
+              {/* Additional sidebar filters are rendered inside ProductFilters component */}
             </div>
             
             <div className="md:col-span-3">

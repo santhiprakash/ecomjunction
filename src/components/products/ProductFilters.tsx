@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useProducts } from "@/contexts/ProductContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,27 +7,48 @@ import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import { 
-  Sheet, 
-  SheetTrigger, 
+import {
+  Sheet,
+  SheetTrigger,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetFooter
 } from "@/components/ui/sheet";
-import { FilterIcon } from "lucide-react";
+import { FilterIcon, X } from "lucide-react";
 
 export default function ProductFilters() {
-  const { 
-    categories, 
-    tags, 
-    filterOptions, 
-    setFilterOptions, 
-    filteredProducts 
+  const {
+    categories,
+    tags,
+    filterOptions,
+    setFilterOptions,
+    filteredProducts
   } = useProducts();
   
   const [tempFilters, setTempFilters] = useState(filterOptions);
   const [priceValues, setPriceValues] = useState<[number, number]>(filterOptions.priceRange);
+  const [filteredTags, setFilteredTags] = useState<string[]>(tags);
+  
+  // Update filtered tags when categories change
+  useEffect(() => {
+    if (tempFilters.categories.length === 0) {
+      setFilteredTags(tags);
+    } else {
+      // In a real implementation, you would fetch tags related to selected categories
+      // For now, we'll simulate this by filtering tags based on category prefix
+      const relatedTags = tags.filter(tag => {
+        // Show all tags if no category is selected
+        if (tempFilters.categories.length === 0) return true;
+        
+        // This is a simple simulation - in a real app you would have a proper relationship between categories and tags
+        return tempFilters.categories.some(cat => 
+          tag.toLowerCase().includes(cat.toLowerCase().substring(0, 3))
+        );
+      });
+      setFilteredTags(relatedTags);
+    }
+  }, [tempFilters.categories, tags]);
   
   const handleCategoryChange = (category: string, checked: boolean) => {
     setTempFilters(prev => {
@@ -43,6 +64,19 @@ export default function ProductFilters() {
         };
       }
     });
+    
+    // Apply filters immediately when category changes
+    if (checked) {
+      setFilterOptions(prev => ({
+        ...prev,
+        categories: [...prev.categories, category]
+      }));
+    } else {
+      setFilterOptions(prev => ({
+        ...prev,
+        categories: prev.categories.filter(c => c !== category)
+      }));
+    }
   };
   
   const handleTagChange = (tag: string, checked: boolean) => {
@@ -59,6 +93,19 @@ export default function ProductFilters() {
         };
       }
     });
+    
+    // Apply tag filters immediately
+    if (checked) {
+      setFilterOptions(prev => ({
+        ...prev,
+        tags: [...prev.tags, tag]
+      }));
+    } else {
+      setFilterOptions(prev => ({
+        ...prev,
+        tags: prev.tags.filter(t => t !== tag)
+      }));
+    }
   };
   
   const handleRatingChange = (rating: number) => {
@@ -87,46 +134,96 @@ export default function ProductFilters() {
     setPriceValues(clearedFilters.priceRange);
     setFilterOptions(clearedFilters);
   };
+
+  const removeFilter = (type: 'category' | 'tag', value: string) => {
+    if (type === 'category') {
+      handleCategoryChange(value, false);
+    } else {
+      handleTagChange(value, false);
+    }
+  };
   
   const maxPrice = Math.max(...tags.map(tag => 10000));
   
-  const desktopFilters = (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-sm font-medium mb-4">Categories</h3>
-        <div className="space-y-2">
-          {categories.map(category => (
-            <div key={category} className="flex items-center space-x-2">
-              <Checkbox 
-                id={`category-${category}`}
-                checked={tempFilters.categories.includes(category)}
-                onCheckedChange={(checked) => 
-                  handleCategoryChange(category, checked === true)
-                }
-              />
-              <label 
-                htmlFor={`category-${category}`}
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+  // Top filters component
+  const topFilters = (
+    <div className="mb-6">
+      {/* Active filters */}
+      {(filterOptions.categories.length > 0 || filterOptions.tags.length > 0) && (
+        <div className="mb-4">
+          <h3 className="text-sm font-medium mb-2">Active Filters:</h3>
+          <div className="flex flex-wrap gap-2">
+            {filterOptions.categories.map(category => (
+              <Badge 
+                key={`active-${category}`}
+                variant="secondary"
+                className="px-3 py-1"
               >
                 {category}
-              </label>
-            </div>
-          ))}
+                <X 
+                  className="ml-1 h-3 w-3 cursor-pointer" 
+                  onClick={() => removeFilter('category', category)}
+                />
+              </Badge>
+            ))}
+            {filterOptions.tags.map(tag => (
+              <Badge 
+                key={`active-${tag}`}
+                variant="outline"
+                className="px-3 py-1"
+              >
+                {tag}
+                <X 
+                  className="ml-1 h-3 w-3 cursor-pointer" 
+                  onClick={() => removeFilter('tag', tag)}
+                />
+              </Badge>
+            ))}
+            {(filterOptions.categories.length > 0 || filterOptions.tags.length > 0) && (
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className="text-xs"
+                onClick={handleClearFilters}
+              >
+                Clear All
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+      
+      {/* Categories at the top */}
+      <div className="mb-4">
+        <h3 className="text-sm font-medium mb-2">Categories:</h3>
+        <div className="flex flex-wrap gap-2">
+          {categories.map(category => {
+            const isSelected = filterOptions.categories.includes(category);
+            return (
+              <Badge 
+                key={category}
+                variant={isSelected ? "default" : "outline"}
+                className="cursor-pointer px-3 py-1"
+                onClick={() => handleCategoryChange(category, !isSelected)}
+              >
+                {category}
+              </Badge>
+            );
+          })}
         </div>
       </div>
       
-      <Separator />
-      
+      {/* Tags based on selected categories */}
       <div>
-        <h3 className="text-sm font-medium mb-4">Tags</h3>
+        <h3 className="text-sm font-medium mb-2">Tags:</h3>
         <div className="flex flex-wrap gap-2">
-          {tags.map(tag => {
-            const isSelected = tempFilters.tags.includes(tag);
+          {filteredTags.map(tag => {
+            const isSelected = filterOptions.tags.includes(tag);
             return (
               <Badge 
                 key={tag}
-                variant={isSelected ? "default" : "outline"}
-                className="cursor-pointer"
+                variant={isSelected ? "secondary" : "outline"}
+                className="cursor-pointer px-3 py-1"
                 onClick={() => handleTagChange(tag, !isSelected)}
               >
                 {tag}
@@ -135,9 +232,11 @@ export default function ProductFilters() {
           })}
         </div>
       </div>
-      
-      <Separator />
-      
+    </div>
+  );
+  
+  const sidebarFilters = (
+    <div className="space-y-6">
       <div>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-medium">Price Range</h3>
@@ -195,18 +294,24 @@ export default function ProductFilters() {
     </div>
   );
   
+  // Return both the top filters and sidebar
   return (
     <>
-      {/* Desktop filters */}
+      {/* Top filters for both desktop and mobile */}
+      <div className="w-full mb-6">
+        {topFilters}
+      </div>
+      
+      {/* Desktop sidebar filters */}
       <div className="hidden md:block sticky top-20 w-full">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Filter by Tags:</h2>
+            <h2 className="text-lg font-semibold">Additional Filters:</h2>
             <Badge variant="outline">
               {filteredProducts.length} products
             </Badge>
           </div>
-          {desktopFilters}
+          {sidebarFilters}
         </div>
       </div>
       
@@ -216,14 +321,14 @@ export default function ProductFilters() {
           <SheetTrigger asChild>
             <Button variant="outline" size="sm" className="mb-4 w-full">
               <FilterIcon className="mr-2 h-4 w-4" />
-              Filters ({filteredProducts.length})
+              Advanced Filters ({filteredProducts.length})
             </Button>
           </SheetTrigger>
           <SheetContent side="left">
             <SheetHeader>
               <SheetTitle>Filter Products</SheetTitle>
             </SheetHeader>
-            <div className="py-6">{desktopFilters}</div>
+            <div className="py-6">{sidebarFilters}</div>
           </SheetContent>
         </Sheet>
       </div>
