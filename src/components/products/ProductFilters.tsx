@@ -15,7 +15,7 @@ import {
   SheetTitle,
   SheetFooter
 } from "@/components/ui/sheet";
-import { FilterIcon, X } from "lucide-react";
+import { Filter, Search, Tag, Grid2X2, List } from "lucide-react";
 
 export default function ProductFilters() {
   const {
@@ -66,16 +66,19 @@ export default function ProductFilters() {
     });
     
     // Apply filters immediately when category changes
+    // Fix: Instead of passing a function, create the new filter object first
     if (checked) {
-      setFilterOptions(prev => ({
-        ...prev,
-        categories: [...prev.categories, category]
-      }));
+      const newCategories = [...filterOptions.categories, category];
+      setFilterOptions({
+        ...filterOptions,
+        categories: newCategories
+      });
     } else {
-      setFilterOptions(prev => ({
-        ...prev,
-        categories: prev.categories.filter(c => c !== category)
-      }));
+      const newCategories = filterOptions.categories.filter(c => c !== category);
+      setFilterOptions({
+        ...filterOptions,
+        categories: newCategories
+      });
     }
   };
   
@@ -95,16 +98,19 @@ export default function ProductFilters() {
     });
     
     // Apply tag filters immediately
+    // Fix: Instead of passing a function, create the new filter object first
     if (checked) {
-      setFilterOptions(prev => ({
-        ...prev,
-        tags: [...prev.tags, tag]
-      }));
+      const newTags = [...filterOptions.tags, tag];
+      setFilterOptions({
+        ...filterOptions,
+        tags: newTags
+      });
     } else {
-      setFilterOptions(prev => ({
-        ...prev,
-        tags: prev.tags.filter(t => t !== tag)
-      }));
+      const newTags = filterOptions.tags.filter(t => t !== tag);
+      setFilterOptions({
+        ...filterOptions,
+        tags: newTags
+      });
     }
   };
   
@@ -120,6 +126,7 @@ export default function ProductFilters() {
   };
   
   const handleApplyFilters = () => {
+    // Fix: Direct assignment instead of passing a function
     setFilterOptions(tempFilters);
   };
   
@@ -160,10 +167,13 @@ export default function ProductFilters() {
                 className="px-3 py-1"
               >
                 {category}
-                <X 
+                <button 
                   className="ml-1 h-3 w-3 cursor-pointer" 
                   onClick={() => removeFilter('category', category)}
-                />
+                  aria-label={`Remove ${category} filter`}
+                >
+                  ×
+                </button>
               </Badge>
             ))}
             {filterOptions.tags.map(tag => (
@@ -173,10 +183,13 @@ export default function ProductFilters() {
                 className="px-3 py-1"
               >
                 {tag}
-                <X 
+                <button 
                   className="ml-1 h-3 w-3 cursor-pointer" 
                   onClick={() => removeFilter('tag', tag)}
-                />
+                  aria-label={`Remove ${tag} filter`}
+                >
+                  ×
+                </button>
               </Badge>
             ))}
             {(filterOptions.categories.length > 0 || filterOptions.tags.length > 0) && (
@@ -320,7 +333,7 @@ export default function ProductFilters() {
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="outline" size="sm" className="mb-4 w-full">
-              <FilterIcon className="mr-2 h-4 w-4" />
+              <Filter className="mr-2 h-4 w-4" />
               Advanced Filters ({filteredProducts.length})
             </Button>
           </SheetTrigger>
