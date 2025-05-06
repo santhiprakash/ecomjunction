@@ -27,7 +27,7 @@ export default function ProductFilters() {
   } = useProducts();
   
   const [tempFilters, setTempFilters] = useState(filterOptions);
-  const [priceValues, setPriceValues] = useState(filterOptions.priceRange);
+  const [priceValues, setPriceValues] = useState<[number, number]>(filterOptions.priceRange);
   
   const handleCategoryChange = (category: string, checked: boolean) => {
     setTempFilters(prev => {
@@ -66,8 +66,10 @@ export default function ProductFilters() {
   };
   
   const handlePriceChange = (values: number[]) => {
-    setPriceValues([values[0], values[1]]);
-    setTempFilters(prev => ({ ...prev, priceRange: [values[0], values[1]] }));
+    // Ensure we always have exactly two values by using a tuple
+    const priceTuple: [number, number] = [values[0], values[1]];
+    setPriceValues(priceTuple);
+    setTempFilters(prev => ({ ...prev, priceRange: priceTuple }));
   };
   
   const handleApplyFilters = () => {
@@ -78,7 +80,7 @@ export default function ProductFilters() {
     const clearedFilters = {
       categories: [],
       tags: [],
-      priceRange: [0, 10000],
+      priceRange: [0, 10000] as [number, number],
       rating: 0,
     };
     setTempFilters(clearedFilters);
