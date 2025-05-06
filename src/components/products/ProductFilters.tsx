@@ -2,10 +2,8 @@
 import { useState, useEffect } from "react";
 import { useProducts } from "@/contexts/ProductContext";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
@@ -15,7 +13,8 @@ import {
   SheetTitle,
   SheetFooter
 } from "@/components/ui/sheet";
-import { Filter, Search, Tag, Grid2X2, List } from "lucide-react";
+import { Filter, Star } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function ProductFilters() {
   const {
@@ -35,13 +34,9 @@ export default function ProductFilters() {
     if (tempFilters.categories.length === 0) {
       setFilteredTags(tags);
     } else {
-      // In a real implementation, you would fetch tags related to selected categories
-      // For now, we'll simulate this by filtering tags based on category prefix
+      // Filter tags based on selected categories
       const relatedTags = tags.filter(tag => {
-        // Show all tags if no category is selected
         if (tempFilters.categories.length === 0) return true;
-        
-        // This is a simple simulation - in a real app you would have a proper relationship between categories and tags
         return tempFilters.categories.some(cat => 
           tag.toLowerCase().includes(cat.toLowerCase().substring(0, 3))
         );
@@ -66,7 +61,6 @@ export default function ProductFilters() {
     });
     
     // Apply filters immediately when category changes
-    // Fix: Instead of passing a function, create the new filter object first
     if (checked) {
       const newCategories = [...filterOptions.categories, category];
       setFilterOptions({
@@ -98,7 +92,6 @@ export default function ProductFilters() {
     });
     
     // Apply tag filters immediately
-    // Fix: Instead of passing a function, create the new filter object first
     if (checked) {
       const newTags = [...filterOptions.tags, tag];
       setFilterOptions({
@@ -119,14 +112,12 @@ export default function ProductFilters() {
   };
   
   const handlePriceChange = (values: number[]) => {
-    // Ensure we always have exactly two values by using a tuple
     const priceTuple: [number, number] = [values[0], values[1]];
     setPriceValues(priceTuple);
     setTempFilters(prev => ({ ...prev, priceRange: priceTuple }));
   };
   
   const handleApplyFilters = () => {
-    // Fix: Direct assignment instead of passing a function
     setFilterOptions(tempFilters);
   };
   
@@ -152,19 +143,50 @@ export default function ProductFilters() {
   
   const maxPrice = Math.max(...tags.map(tag => 10000));
   
-  // Top filters component
-  const topFilters = (
-    <div className="mb-6">
-      {/* Active filters */}
+  // All filters in a modern design
+  return (
+    <div className="space-y-6">
+      {/* Categories as modern pills */}
+      <div className="flex flex-wrap gap-2">
+        {categories.map(category => {
+          const isSelected = filterOptions.categories.includes(category);
+          return (
+            <Badge 
+              key={category}
+              variant={isSelected ? "default" : "outline"}
+              className={cn(
+                "cursor-pointer px-4 py-2 rounded-full text-sm transition-all",
+                isSelected ? "bg-primary hover:bg-primary/90" : "hover:bg-accent"
+              )}
+              onClick={() => handleCategoryChange(category, !isSelected)}
+            >
+              {category}
+            </Badge>
+          );
+        })}
+      </div>
+      
+      {/* Active filters with clear option */}
       {(filterOptions.categories.length > 0 || filterOptions.tags.length > 0) && (
-        <div className="mb-4">
-          <h3 className="text-sm font-medium mb-2">Active Filters:</h3>
+        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-medium">Active Filters</h3>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="h-8 text-xs"
+              onClick={handleClearFilters}
+            >
+              Clear All
+            </Button>
+          </div>
+          
           <div className="flex flex-wrap gap-2">
             {filterOptions.categories.map(category => (
               <Badge 
                 key={`active-${category}`}
                 variant="secondary"
-                className="px-3 py-1"
+                className="px-3 py-1 rounded-full"
               >
                 {category}
                 <button 
@@ -180,7 +202,7 @@ export default function ProductFilters() {
               <Badge 
                 key={`active-${tag}`}
                 variant="outline"
-                className="px-3 py-1"
+                className="px-3 py-1 rounded-full"
               >
                 {tag}
                 <button 
@@ -192,159 +214,141 @@ export default function ProductFilters() {
                 </button>
               </Badge>
             ))}
-            {(filterOptions.categories.length > 0 || filterOptions.tags.length > 0) && (
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className="text-xs"
-                onClick={handleClearFilters}
-              >
-                Clear All
-              </Button>
-            )}
           </div>
         </div>
       )}
       
-      {/* Categories at the top */}
-      <div className="mb-4">
-        <h3 className="text-sm font-medium mb-2">Categories:</h3>
-        <div className="flex flex-wrap gap-2">
-          {categories.map(category => {
-            const isSelected = filterOptions.categories.includes(category);
-            return (
-              <Badge 
-                key={category}
-                variant={isSelected ? "default" : "outline"}
-                className="cursor-pointer px-3 py-1"
-                onClick={() => handleCategoryChange(category, !isSelected)}
-              >
-                {category}
-              </Badge>
-            );
-          })}
-        </div>
-      </div>
-      
       {/* Tags based on selected categories */}
-      <div>
-        <h3 className="text-sm font-medium mb-2">Tags:</h3>
-        <div className="flex flex-wrap gap-2">
-          {filteredTags.map(tag => {
-            const isSelected = filterOptions.tags.includes(tag);
-            return (
-              <Badge 
-                key={tag}
-                variant={isSelected ? "secondary" : "outline"}
-                className="cursor-pointer px-3 py-1"
-                onClick={() => handleTagChange(tag, !isSelected)}
+      {filteredTags.length > 0 && (
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+          <h3 className="text-sm font-medium mb-3">Popular Tags</h3>
+          <div className="flex flex-wrap gap-2">
+            {filteredTags.map(tag => {
+              const isSelected = filterOptions.tags.includes(tag);
+              return (
+                <Badge 
+                  key={tag}
+                  variant={isSelected ? "secondary" : "outline"}
+                  className={cn(
+                    "cursor-pointer px-3 py-1 rounded-full text-xs transition-all",
+                    isSelected ? "bg-secondary hover:bg-secondary/90" : "hover:bg-accent"
+                  )}
+                  onClick={() => handleTagChange(tag, !isSelected)}
+                >
+                  {tag}
+                </Badge>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      
+      {/* Advanced filters sheet for mobile */}
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <Badge variant="outline" className="px-3 py-1">
+            {filteredProducts.length} products
+          </Badge>
+          
+          {filterOptions.rating > 0 && (
+            <Badge variant="outline" className="flex items-center gap-1 px-3 py-1">
+              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+              {filterOptions.rating}+
+              <button 
+                className="ml-1 h-3 w-3 cursor-pointer" 
+                onClick={() => setFilterOptions({...filterOptions, rating: 0})}
+                aria-label="Clear rating filter"
               >
-                {tag}
-              </Badge>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-  
-  const sidebarFilters = (
-    <div className="space-y-6">
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-medium">Price Range</h3>
-          <div className="text-sm">
-            ₹{priceValues[0]} - ₹{priceValues[1]}
-          </div>
-        </div>
-        <Slider
-          min={0}
-          max={maxPrice}
-          step={100}
-          value={priceValues}
-          onValueChange={handlePriceChange}
-          className="mb-6"
-        />
-      </div>
-      
-      <Separator />
-      
-      <div>
-        <h3 className="text-sm font-medium mb-4">Minimum Rating</h3>
-        <div className="flex gap-1">
-          {[1, 2, 3, 4, 5].map(rating => (
-            <Button
-              key={rating}
-              variant={tempFilters.rating === rating ? "default" : "outline"}
-              size="sm"
-              onClick={() => handleRatingChange(rating)}
-              className="px-3"
-            >
-              {rating}
-            </Button>
-          ))}
-        </div>
-      </div>
-      
-      <Separator />
-      
-      <div className="flex items-center justify-between">
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={handleClearFilters}
-        >
-          Clear Filters
-        </Button>
-        
-        <Button 
-          size="sm"
-          onClick={handleApplyFilters}
-        >
-          Apply Filters
-        </Button>
-      </div>
-    </div>
-  );
-  
-  // Return both the top filters and sidebar
-  return (
-    <>
-      {/* Top filters for both desktop and mobile */}
-      <div className="w-full mb-6">
-        {topFilters}
-      </div>
-      
-      {/* Desktop sidebar filters */}
-      <div className="hidden md:block sticky top-20 w-full">
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Additional Filters:</h2>
-            <Badge variant="outline">
-              {filteredProducts.length} products
+                ×
+              </button>
             </Badge>
-          </div>
-          {sidebarFilters}
+          )}
+          
+          {(filterOptions.priceRange[0] > 0 || filterOptions.priceRange[1] < maxPrice) && (
+            <Badge variant="outline" className="px-3 py-1">
+              ₹{filterOptions.priceRange[0]} - ₹{filterOptions.priceRange[1]}
+              <button 
+                className="ml-1 h-3 w-3 cursor-pointer" 
+                onClick={() => setFilterOptions({...filterOptions, priceRange: [0, maxPrice] as [number, number]})}
+                aria-label="Clear price filter"
+              >
+                ×
+              </button>
+            </Badge>
+          )}
         </div>
-      </div>
-      
-      {/* Mobile filters */}
-      <div className="block md:hidden">
+        
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="outline" size="sm" className="mb-4 w-full">
-              <Filter className="mr-2 h-4 w-4" />
-              Advanced Filters ({filteredProducts.length})
+            <Button variant="outline" size="sm" className="gap-2">
+              <Filter className="h-4 w-4" />
+              Advanced Filters
             </Button>
           </SheetTrigger>
-          <SheetContent side="left">
+          <SheetContent side="right">
             <SheetHeader>
-              <SheetTitle>Filter Products</SheetTitle>
+              <SheetTitle>Advanced Filters</SheetTitle>
             </SheetHeader>
-            <div className="py-6">{sidebarFilters}</div>
+            
+            <div className="py-6 space-y-6">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-medium">Price Range</h3>
+                  <div className="text-sm">
+                    ₹{priceValues[0]} - ₹{priceValues[1]}
+                  </div>
+                </div>
+                <Slider
+                  min={0}
+                  max={maxPrice}
+                  step={100}
+                  value={priceValues}
+                  onValueChange={handlePriceChange}
+                  className="mb-6"
+                />
+              </div>
+              
+              <Separator />
+              
+              <div>
+                <h3 className="text-sm font-medium mb-4">Minimum Rating</h3>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map(rating => (
+                    <Button
+                      key={rating}
+                      variant={tempFilters.rating === rating ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => handleRatingChange(rating)}
+                      className="flex-1 px-0"
+                    >
+                      {rating}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+              
+              <Separator />
+              
+              <div className="flex items-center justify-between pt-4">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleClearFilters}
+                >
+                  Reset
+                </Button>
+                
+                <Button 
+                  size="sm"
+                  onClick={handleApplyFilters}
+                >
+                  Apply Filters
+                </Button>
+              </div>
+            </div>
           </SheetContent>
         </Sheet>
       </div>
-    </>
+    </div>
   );
 }

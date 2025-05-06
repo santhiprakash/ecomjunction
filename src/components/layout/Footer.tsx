@@ -5,11 +5,11 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
   
   return (
-    <footer className="border-t bg-background">
-      <div className="container px-4 py-8 md:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <h3 className="text-lg font-semibold">eComJunction</h3>
+    <footer className="border-t bg-white dark:bg-gray-800">
+      <div className="container max-w-6xl mx-auto px-4 py-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="col-span-2 md:col-span-1">
+            <h3 className="text-lg font-semibold bg-gradient-to-r from-primary to-brand bg-clip-text text-transparent">eComJunction</h3>
             <p className="mt-2 text-sm text-muted-foreground">
               The ultimate platform for influencers to showcase and monetize product recommendations.
             </p>
@@ -18,30 +18,30 @@ export default function Footer() {
               Bengaluru, KA, India - 560036
             </p>
             <p className="mt-2 text-sm text-muted-foreground">
-              <a href="mailto:info@ecomjunction.net">info@ecomjunction.net</a>
+              <a href="mailto:info@ecomjunction.net" className="hover:text-primary">info@ecomjunction.net</a>
             </p>
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold">Platform</h3>
-            <ul className="mt-2 space-y-2 text-sm">
+            <h3 className="text-base font-semibold mb-3">Platform</h3>
+            <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/pricing" className="text-muted-foreground hover:text-foreground">
+                <Link to="/pricing" className="text-muted-foreground hover:text-primary transition-colors">
                   Pricing
                 </Link>
               </li>
               <li>
-                <Link to="/affiliate-programs" className="text-muted-foreground hover:text-foreground">
+                <Link to="/affiliate-programs" className="text-muted-foreground hover:text-primary transition-colors">
                   Affiliate Programs
                 </Link>
               </li>
               <li>
-                <Link to="/integrations" className="text-muted-foreground hover:text-foreground">
+                <Link to="/integrations" className="text-muted-foreground hover:text-primary transition-colors">
                   Integrations
                 </Link>
               </li>
               <li>
-                <Link to="/features" className="text-muted-foreground hover:text-foreground">
+                <Link to="/features" className="text-muted-foreground hover:text-primary transition-colors">
                   Features
                 </Link>
               </li>
@@ -49,25 +49,25 @@ export default function Footer() {
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold">Resources</h3>
-            <ul className="mt-2 space-y-2 text-sm">
+            <h3 className="text-base font-semibold mb-3">Resources</h3>
+            <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/blog" className="text-muted-foreground hover:text-foreground">
+                <Link to="/blog" className="text-muted-foreground hover:text-primary transition-colors">
                   Blog
                 </Link>
               </li>
               <li>
-                <Link to="/guides" className="text-muted-foreground hover:text-foreground">
+                <Link to="/guides" className="text-muted-foreground hover:text-primary transition-colors">
                   Guides
                 </Link>
               </li>
               <li>
-                <Link to="/help-center" className="text-muted-foreground hover:text-foreground">
+                <Link to="/help-center" className="text-muted-foreground hover:text-primary transition-colors">
                   Help Center
                 </Link>
               </li>
               <li>
-                <Link to="/api-documentation" className="text-muted-foreground hover:text-foreground">
+                <Link to="/api-documentation" className="text-muted-foreground hover:text-primary transition-colors">
                   API Documentation
                 </Link>
               </li>
@@ -75,25 +75,25 @@ export default function Footer() {
           </div>
           
           <div>
-            <h3 className="text-lg font-semibold">Company</h3>
-            <ul className="mt-2 space-y-2 text-sm">
+            <h3 className="text-base font-semibold mb-3">Company</h3>
+            <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/about-us" className="text-muted-foreground hover:text-foreground">
+                <Link to="/about-us" className="text-muted-foreground hover:text-primary transition-colors">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link to="/careers" className="text-muted-foreground hover:text-foreground">
+                <Link to="/careers" className="text-muted-foreground hover:text-primary transition-colors">
                   Careers
                 </Link>
               </li>
               <li>
-                <Link to="/privacy-policy" className="text-muted-foreground hover:text-foreground">
+                <Link to="/privacy-policy" className="text-muted-foreground hover:text-primary transition-colors">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link to="/terms-of-service" className="text-muted-foreground hover:text-foreground">
+                <Link to="/terms-of-service" className="text-muted-foreground hover:text-primary transition-colors">
                   Terms of Service
                 </Link>
               </li>
@@ -101,25 +101,25 @@ export default function Footer() {
           </div>
         </div>
         
-        <div className="mt-8 border-t pt-6">
-          <div className="text-sm text-muted-foreground">
-            <p>
+        <div className="mt-12 pt-6 border-t">
+          <div className="text-sm text-muted-foreground mb-6">
+            <p className="max-w-3xl">
               <strong>Affiliate Disclosure:</strong> As an Amazon Associate and affiliate for other companies, I earn from qualifying purchases. This means I may receive a commission if you click on a link and make a purchase. This does not affect the price you pay.
             </p>
           </div>
           
-          <div className="mt-4 flex flex-col items-center justify-between gap-4 sm:flex-row">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-muted-foreground">
               © {currentYear} eComJunction. All rights reserved.
             </p>
-            <div className="flex items-center gap-4">
-              <Link to="/privacy" className="text-xs text-muted-foreground hover:text-foreground">
+            <div className="flex items-center gap-6">
+              <Link to="/privacy" className="text-xs text-muted-foreground hover:text-primary">
                 Privacy
               </Link>
-              <Link to="/terms" className="text-xs text-muted-foreground hover:text-foreground">
+              <Link to="/terms" className="text-xs text-muted-foreground hover:text-primary">
                 Terms
               </Link>
-              <Link to="/cookies" className="text-xs text-muted-foreground hover:text-foreground">
+              <Link to="/cookies" className="text-xs text-muted-foreground hover:text-primary">
                 Cookies
               </Link>
             </div>

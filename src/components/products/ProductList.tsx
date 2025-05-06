@@ -24,17 +24,17 @@ export default function ProductList() {
   } = useProducts();
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="relative w-full sm:w-64">
+    <div className="space-y-8">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+        <div className="relative w-full sm:w-80">
           <Input
             placeholder="Search products..."
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
+            className="pl-9 bg-background"
           />
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <svg
-              className="w-4 h-4 text-gray-500"
+              className="w-4 h-4 text-muted-foreground"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -50,12 +50,12 @@ export default function ProductList() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 w-full sm:w-auto">
+        <div className="flex items-center gap-3 w-full sm:w-auto">
           <Select
             value={sortOption}
             onValueChange={(value) => setSortOption(value as any)}
           >
-            <SelectTrigger className="w-full sm:w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px] bg-background">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
@@ -66,7 +66,7 @@ export default function ProductList() {
             </SelectContent>
           </Select>
 
-          <div className="flex border rounded-md">
+          <div className="flex border rounded-md bg-background">
             <Button
               variant={viewMode === "grid" ? "default" : "ghost"}
               size="icon"
@@ -88,8 +88,8 @@ export default function ProductList() {
       </div>
 
       {filteredProducts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center p-12 text-center">
-          <div className="rounded-full bg-muted p-4">
+        <div className="flex flex-col items-center justify-center p-12 text-center bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+          <div className="rounded-full bg-muted p-6">
             <svg
               className="h-12 w-12 text-muted-foreground"
               xmlns="http://www.w3.org/2000/svg"
@@ -105,9 +105,9 @@ export default function ProductList() {
               />
             </svg>
           </div>
-          <h3 className="mt-4 text-lg font-semibold">No products found</h3>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Try adjusting your search or filter to find what you're looking for.
+          <h3 className="mt-6 text-xl font-semibold">No products found</h3>
+          <p className="mt-2 text-muted-foreground max-w-md mx-auto">
+            Try adjusting your search or filter criteria to find what you're looking for.
           </p>
         </div>
       ) : viewMode === "grid" ? (
@@ -117,7 +117,7 @@ export default function ProductList() {
           ))}
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {filteredProducts.map((product) => (
             <ProductListItem key={product.id} product={product} />
           ))}
