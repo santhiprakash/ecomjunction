@@ -1,7 +1,7 @@
 
 import { OpenAIService, ProductExtractionResult } from './OpenAIService';
 import { URLParsingService, BasicProductInfo } from './URLParsingService';
-import { ProductFormData } from '@/types';
+import { ProductFormData, Currency } from '@/types';
 
 export interface ExtractionProgress {
   step: 'url' | 'scraping' | 'ai' | 'complete';
@@ -75,7 +75,7 @@ export class ProductExtractionService {
         title: aiExtraction?.title || basicInfo.title || '',
         description: aiExtraction?.description || basicInfo.description || '',
         price: aiExtraction?.price || this.extractPrice(basicInfo.price) || 0,
-        currency: aiExtraction?.currency || 'INR',
+        currency: this.validateCurrency(aiExtraction?.currency) || 'INR',
         image: basicInfo.image || '',
         categories: aiExtraction?.categories || [],
         tags: aiExtraction?.tags || [],
@@ -106,6 +106,14 @@ export class ProductExtractionService {
     const price = parseFloat(numericPrice.replace(',', ''));
     
     return isNaN(price) ? 0 : price;
+  }
+
+  private static validateCurrency(currency?: string): Currency {
+    const validCurrencies: Currency[] = ['USD', 'INR', 'EUR', 'GBP'];
+    if (currency && validCurrencies.includes(currency as Currency)) {
+      return currency as Currency;
+    }
+    return 'INR'; // Default fallback
   }
 
   static async isServiceReady(): Promise<{
