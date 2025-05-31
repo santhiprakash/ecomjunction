@@ -7,48 +7,177 @@ import ProductFilters from "@/components/products/ProductFilters";
 import AddProductForm from "@/components/products/AddProductForm";
 import ThemeCustomizer from "@/components/theme/ThemeCustomizer";
 import { Button } from "@/components/ui/button";
-import { Share2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Share2, Search, Grid3X3, List, Filter } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 export default function Index() {
   const { filteredProducts } = useProducts();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [selectedCategory, setSelectedCategory] = useState("All Products");
+
+  const categories = [
+    "All Products",
+    "Electronics", 
+    "Fitness",
+    "Kitchen",
+    "Home & Garden",
+    "Fashion"
+  ];
+
+  const tags = [
+    "Trending", "Best Seller", "New Arrival", "Premium", "Budget-Friendly", 
+    "Eco-Friendly", "Tech", "Fitness", "Home", "Kitchen"
+  ];
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30">
       <Header />
       
-      <main className="flex-1 bg-gray-50 dark:bg-gray-900">
-        <section className="bg-gradient-to-b from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 py-12">
+      <main className="flex-1">
+        {/* Hero Section */}
+        <section className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 text-white py-16">
           <div className="container max-w-6xl mx-auto px-4">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
-              <div>
-                <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-brand">
-                  Affiliate Products
+            <div className="flex flex-col md:flex-row items-center gap-8">
+              <div className="flex-shrink-0">
+                <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                  <div className="w-20 h-20 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                    SJ
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex-1 text-center md:text-left">
+                <h1 className="text-4xl md:text-5xl font-bold mb-2">
+                  @sarahjohnson
                 </h1>
-                <p className="text-muted-foreground mt-2 max-w-lg">
-                  Discover and showcase high-converting affiliate products to boost your earnings
+                <p className="text-xl text-blue-100 mb-4">
+                  Curating the best products for modern living
                 </p>
+                <div className="flex flex-wrap gap-4 justify-center md:justify-start text-sm">
+                  <span className="flex items-center gap-1">
+                    <span className="font-semibold">2.4k</span> Products
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span className="font-semibold">45.2k</span> Followers
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span className="font-semibold">89%</span> Success Rate
+                  </span>
+                </div>
               </div>
               
               <div className="flex items-center gap-3">
                 <ThemeCustomizer />
-                
-                <Button variant="outline" className="shadow-sm">
+                <Button variant="outline" className="bg-white/10 border-white/30 text-white hover:bg-white/20">
                   <Share2 className="mr-2 h-4 w-4" />
-                  Share
+                  Share Profile
                 </Button>
-                
                 <AddProductForm />
               </div>
             </div>
-            
-            {/* Top filters area - categories and active filters */}
-            <ProductFilters />
           </div>
         </section>
-        
-        {/* Product listing section with full width */}
-        <section className="py-8 px-4">
-          <div className="container max-w-6xl mx-auto">
+
+        {/* Categories Section */}
+        <section className="bg-white border-b">
+          <div className="container max-w-6xl mx-auto px-4">
+            <div className="flex items-center justify-between py-6">
+              <div className="flex items-center gap-1 overflow-x-auto">
+                {categories.map((category) => (
+                  <Button
+                    key={category}
+                    variant={selectedCategory === category ? "default" : "ghost"}
+                    className={`whitespace-nowrap ${
+                      selectedCategory === category 
+                        ? "bg-blue-600 text-white" 
+                        : "text-gray-600 hover:text-blue-600"
+                    }`}
+                    onClick={() => setSelectedCategory(category)}
+                  >
+                    {category}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Search and Filters Section */}
+        <section className="bg-gray-50/50 border-b">
+          <div className="container max-w-6xl mx-auto px-4 py-6">
+            <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-6">
+              {/* Search Bar */}
+              <div className="flex-1 max-w-md relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Input
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 bg-white"
+                />
+              </div>
+
+              {/* View Controls */}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1 border rounded-lg p-1 bg-white">
+                  <Button
+                    variant={viewMode === "grid" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setViewMode("grid")}
+                    className="h-8 w-8 p-0"
+                  >
+                    <Grid3X3 className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === "list" ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setViewMode("list")}
+                    className="h-8 w-8 p-0"
+                  >
+                    <List className="h-4 w-4" />
+                  </Button>
+                </div>
+                
+                <Button variant="outline" size="sm" className="bg-white">
+                  <Filter className="mr-2 h-4 w-4" />
+                  Sort
+                </Button>
+              </div>
+            </div>
+
+            {/* Tag Filters */}
+            <div className="flex flex-wrap gap-2">
+              {tags.map((tag) => (
+                <Badge
+                  key={tag}
+                  variant="secondary"
+                  className="cursor-pointer hover:bg-blue-100 hover:text-blue-700 transition-colors"
+                >
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Products Section */}
+        <section className="py-8">
+          <div className="container max-w-6xl mx-auto px-4">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {selectedCategory}
+                </h2>
+                <p className="text-gray-600">
+                  {filteredProducts.length} products found
+                </p>
+              </div>
+            </div>
+            
+            <ProductFilters />
             <ProductList />
           </div>
         </section>
