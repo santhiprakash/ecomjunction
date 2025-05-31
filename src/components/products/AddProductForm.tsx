@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useProducts } from "@/contexts/ProductContext";
 import { Button } from "@/components/ui/button";
@@ -294,7 +293,6 @@ export default function AddProductForm() {
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Select category</SelectItem>
                     {existingCategories.map((category) => (
                       <SelectItem key={category} value={category}>
                         {category}
@@ -343,7 +341,6 @@ export default function AddProductForm() {
                     <SelectValue placeholder="Select tag" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Select tag</SelectItem>
                     {existingTags.map((tag) => (
                       <SelectItem key={tag} value={tag}>
                         {tag}
