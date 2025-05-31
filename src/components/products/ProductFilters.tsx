@@ -18,7 +18,6 @@ import { cn } from "@/lib/utils";
 
 export default function ProductFilters() {
   const {
-    categories,
     tags,
     filterOptions,
     setFilterOptions,
@@ -27,54 +26,6 @@ export default function ProductFilters() {
   
   const [tempFilters, setTempFilters] = useState(filterOptions);
   const [priceValues, setPriceValues] = useState<[number, number]>(filterOptions.priceRange);
-  const [filteredTags, setFilteredTags] = useState<string[]>(tags);
-  
-  // Update filtered tags when categories change
-  useEffect(() => {
-    if (tempFilters.categories.length === 0) {
-      setFilteredTags(tags);
-    } else {
-      // Filter tags based on selected categories
-      const relatedTags = tags.filter(tag => {
-        if (tempFilters.categories.length === 0) return true;
-        return tempFilters.categories.some(cat => 
-          tag.toLowerCase().includes(cat.toLowerCase().substring(0, 3))
-        );
-      });
-      setFilteredTags(relatedTags);
-    }
-  }, [tempFilters.categories, tags]);
-  
-  const handleCategoryChange = (category: string, checked: boolean) => {
-    setTempFilters(prev => {
-      if (checked) {
-        return { 
-          ...prev, 
-          categories: [...prev.categories, category] 
-        };
-      } else {
-        return { 
-          ...prev, 
-          categories: prev.categories.filter(c => c !== category) 
-        };
-      }
-    });
-    
-    // Apply filters immediately when category changes
-    if (checked) {
-      const newCategories = [...filterOptions.categories, category];
-      setFilterOptions({
-        ...filterOptions,
-        categories: newCategories
-      });
-    } else {
-      const newCategories = filterOptions.categories.filter(c => c !== category);
-      setFilterOptions({
-        ...filterOptions,
-        categories: newCategories
-      });
-    }
-  };
   
   const handleTagChange = (tag: string, checked: boolean) => {
     setTempFilters(prev => {
@@ -133,39 +84,15 @@ export default function ProductFilters() {
     setFilterOptions(clearedFilters);
   };
 
-  const removeFilter = (type: 'category' | 'tag', value: string) => {
-    if (type === 'category') {
-      handleCategoryChange(value, false);
-    } else {
-      handleTagChange(value, false);
-    }
+  const removeFilter = (type: 'tag', value: string) => {
+    handleTagChange(value, false);
   };
   
   const maxPrice = Math.max(...tags.map(tag => 10000));
   
-  // All filters in a modern design
+  // Simplified filters without duplicate categories
   return (
     <div className="space-y-6">
-      {/* Categories as modern pills */}
-      <div className="flex flex-wrap gap-2">
-        {categories.map(category => {
-          const isSelected = filterOptions.categories.includes(category);
-          return (
-            <Badge 
-              key={category}
-              variant={isSelected ? "default" : "outline"}
-              className={cn(
-                "cursor-pointer px-4 py-2 rounded-full text-sm transition-all",
-                isSelected ? "bg-primary hover:bg-primary/90" : "hover:bg-accent"
-              )}
-              onClick={() => handleCategoryChange(category, !isSelected)}
-            >
-              {category}
-            </Badge>
-          );
-        })}
-      </div>
-      
       {/* Active filters with clear option */}
       {(filterOptions.categories.length > 0 || filterOptions.tags.length > 0) && (
         <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm">
@@ -189,13 +116,6 @@ export default function ProductFilters() {
                 className="px-3 py-1 rounded-full"
               >
                 {category}
-                <button 
-                  className="ml-1 h-3 w-3 cursor-pointer" 
-                  onClick={() => removeFilter('category', category)}
-                  aria-label={`Remove ${category} filter`}
-                >
-                  ×
-                </button>
               </Badge>
             ))}
             {filterOptions.tags.map(tag => (
@@ -214,31 +134,6 @@ export default function ProductFilters() {
                 </button>
               </Badge>
             ))}
-          </div>
-        </div>
-      )}
-      
-      {/* Tags based on selected categories */}
-      {filteredTags.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
-          <h3 className="text-sm font-medium mb-3">Popular Tags</h3>
-          <div className="flex flex-wrap gap-2">
-            {filteredTags.map(tag => {
-              const isSelected = filterOptions.tags.includes(tag);
-              return (
-                <Badge 
-                  key={tag}
-                  variant={isSelected ? "secondary" : "outline"}
-                  className={cn(
-                    "cursor-pointer px-3 py-1 rounded-full text-xs transition-all",
-                    isSelected ? "bg-secondary hover:bg-secondary/90" : "hover:bg-accent"
-                  )}
-                  onClick={() => handleTagChange(tag, !isSelected)}
-                >
-                  {tag}
-                </Badge>
-              );
-            })}
           </div>
         </div>
       )}
