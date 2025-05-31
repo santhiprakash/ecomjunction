@@ -1,73 +1,178 @@
-# Welcome to your Lovable project
 
-## Project info
+# eComJunction - Product Showcase Platform
 
-**URL**: https://lovable.dev/projects/9194e63b-d8c4-4802-a7d2-fcb26bb8e743
+A powerful SAAS platform for influencers and affiliate marketers to showcase and organize their product recommendations with AI-powered Quick Add functionality.
 
-## How can I edit this code?
+![eComJunction Platform](https://via.placeholder.com/800x400/0066CC/FFFFFF?text=eComJunction+Platform)
 
-There are several ways of editing your application.
+## 🚀 Features
 
-**Use Lovable**
+- **AI-Powered Quick Add**: Automatically extract product information from any e-commerce URL using OpenAI
+- **Product Showcase**: Beautiful grid and list views with advanced filtering
+- **Smart Organization**: Categories, tags, and intelligent product management
+- **Theme Customization**: Light/dark modes with custom color schemes
+- **Responsive Design**: Works perfectly on desktop, tablet, and mobile
+- **Affiliate Compliance**: Built-in FTC disclosure compliance
+- **Real-time Search**: Instant product search and filtering
+- **Export/Import**: Bulk operations for efficient product management
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/9194e63b-d8c4-4802-a7d2-fcb26bb8e743) and start prompting.
+## 🛠️ Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Frontend**: React 18, TypeScript, Vite
+- **UI Components**: shadcn/ui, Radix UI, Tailwind CSS
+- **State Management**: React Context, TanStack Query
+- **Routing**: React Router v6
+- **AI Integration**: OpenAI GPT-4o-mini
+- **Icons**: Lucide React
+- **Charts**: Recharts
 
-**Use your preferred IDE**
+## 📋 Prerequisites
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- Node.js 18+ and npm
+- OpenAI API key (for Quick Add functionality)
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 🚀 Quick Start
 
-Follow these steps:
+### 1. Clone the Repository
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+```bash
+git clone https://github.com/yourusername/ecomjunction-platform.git
+cd ecomjunction-platform
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### 2. Install Dependencies
 
-# Step 3: Install the necessary dependencies.
-npm i
+```bash
+npm install
+```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+### 3. Environment Setup
+
+Create a `.env.local` file based on `.env.example`:
+
+```bash
+cp .env.example .env.local
+```
+
+Add your OpenAI API key to enable Quick Add functionality:
+
+```env
+VITE_OPENAI_API_KEY=your_openai_api_key_here
+```
+
+### 4. Start Development Server
+
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The application will be available at `http://localhost:5173`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🔧 Development
 
-**Use GitHub Codespaces**
+### Project Structure
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```
+src/
+├── components/          # Reusable UI components
+│   ├── layout/         # Header, Footer, Navigation
+│   ├── products/       # Product-related components
+│   ├── theme/          # Theme customization
+│   └── ui/             # shadcn/ui components
+├── contexts/           # React Context providers
+├── hooks/              # Custom React hooks
+├── pages/              # Page components
+├── services/           # API and external services
+├── types/              # TypeScript type definitions
+└── utils/              # Utility functions
+```
 
-## What technologies are used for this project?
+### Available Scripts
 
-This project is built with:
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run preview      # Preview production build
+npm run lint         # Run ESLint
+npm run type-check   # Run TypeScript type checking
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Code Quality
 
-## How can I deploy this project?
+This project uses:
+- **ESLint** for code linting
+- **TypeScript** for type safety
+- **Prettier** for code formatting
+- **Tailwind CSS** for styling
 
-Simply open [Lovable](https://lovable.dev/projects/9194e63b-d8c4-4802-a7d2-fcb26bb8e743) and click on Share -> Publish.
+## 🤝 Contributing
 
-## Can I connect a custom domain to my Lovable project?
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
-Yes, you can!
+### Quick Contribution Steps
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Make your changes
+4. Run tests: `npm run test`
+5. Commit changes: `git commit -m 'Add amazing feature'`
+6. Push to branch: `git push origin feature/amazing-feature`
+7. Open a Pull Request
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🌟 Support
+
+- 📧 Email: info@ecomjunction.net
+- 🌐 Website: [ecomjunction.net](https://ecomjunction.net)
+- 📖 Documentation: [View Documentation](src/pages/Documentation.tsx)
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/ecomjunction-platform)
+
+### Netlify
+
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/yourusername/ecomjunction-platform)
+
+### Docker
+
+```bash
+# Build the image
+docker build -t ecomjunction .
+
+# Run the container
+docker run -p 3000:3000 ecomjunction
+```
+
+### Manual Deployment
+
+```bash
+npm run build
+# Deploy the 'dist' folder to your hosting provider
+```
+
+## 📈 Roadmap
+
+- [ ] User authentication and profiles
+- [ ] Advanced analytics dashboard
+- [ ] Multi-language support
+- [ ] Mobile app (React Native)
+- [ ] API for third-party integrations
+- [ ] Affiliate link tracking and analytics
+- [ ] Team collaboration features
+
+## 🙏 Acknowledgments
+
+- [shadcn/ui](https://ui.shadcn.com/) for the beautiful UI components
+- [OpenAI](https://openai.com/) for AI-powered product extraction
+- [Tailwind CSS](https://tailwindcss.com/) for the utility-first styling
+- [React](https://reactjs.org/) for the amazing frontend framework
+
+---
+
+Made with ❤️ by the eComJunction team
