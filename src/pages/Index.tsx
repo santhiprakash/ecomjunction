@@ -101,16 +101,9 @@ export default function Index() {
                   </Button>
                 ))}
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Search and Filters Section */}
-        <section className="bg-gray-50/50 border-b">
-          <div className="container max-w-6xl mx-auto px-4 py-6">
-            <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-6">
-              {/* Search Bar */}
-              <div className="flex-1 max-w-md relative">
+              
+              {/* Search Bar moved here */}
+              <div className="flex-shrink-0 w-80 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
                   placeholder="Search products..."
@@ -119,36 +112,13 @@ export default function Index() {
                   className="pl-10 bg-white"
                 />
               </div>
-
-              {/* View Controls */}
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1 border rounded-lg p-1 bg-white">
-                  <Button
-                    variant={viewMode === "grid" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setViewMode("grid")}
-                    className="h-8 w-8 p-0"
-                  >
-                    <Grid3X3 className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant={viewMode === "list" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setViewMode("list")}
-                    className="h-8 w-8 p-0"
-                  >
-                    <List className="h-4 w-4" />
-                  </Button>
-                </div>
-                
-                <Button variant="outline" size="sm" className="bg-white">
-                  <Filter className="mr-2 h-4 w-4" />
-                  Sort
-                </Button>
-              </div>
             </div>
+          </div>
+        </section>
 
-            {/* Tag Filters */}
+        {/* Tag Filters Section */}
+        <section className="bg-gray-50/50 border-b">
+          <div className="container max-w-6xl mx-auto px-4 py-6">
             <div className="flex flex-wrap gap-2">
               {tags.map((tag) => (
                 <Badge

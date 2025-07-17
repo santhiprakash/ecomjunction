@@ -57,7 +57,7 @@ export default function Header() {
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center">
             <span className="text-xl font-bold bg-gradient-to-r from-primary to-brand bg-clip-text text-transparent">
-              eComJunction
+              Shopmatic
             </span>
           </Link>
         </div>
@@ -203,7 +203,7 @@ export default function Header() {
             <SheetContent side="right">
               <div className="flex flex-col gap-6 py-6">
                 <Link to="/" className="flex items-center">
-                  <span className="text-xl font-bold">eComJunction</span>
+                  <span className="text-xl font-bold">Shopmatic</span>
                 </Link>
                 
                 <nav className="flex flex-col space-y-4">

@@ -26,30 +26,6 @@ export default function ProductList() {
   return (
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
-        <div className="relative w-full sm:w-80">
-          <Input
-            placeholder="Search products..."
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 bg-background"
-          />
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <svg
-              className="w-4 h-4 text-muted-foreground"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
-        </div>
-
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <Select
             value={sortOption}
