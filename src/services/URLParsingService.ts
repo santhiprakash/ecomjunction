@@ -28,7 +28,7 @@ export class URLParsingService {
       const response = await fetch(url, {
         mode: 'cors',
         headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; eComJunction/1.0)',
+          'User-Agent': 'Mozilla/5.0 (compatible; Shopmatic/1.0)',
         },
       });
 

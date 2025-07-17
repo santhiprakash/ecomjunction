@@ -21,14 +21,14 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [theme, setTheme] = useState<ThemeSettings>(() => {
     // Try to get theme from localStorage
-    const savedTheme = localStorage.getItem("ecomjunction-theme");
+    const savedTheme = localStorage.getItem("shopmatic-theme");
     return savedTheme ? JSON.parse(savedTheme) : defaultTheme;
   });
 
   // Apply theme to CSS variables
   useEffect(() => {
     // Save theme to localStorage
-    localStorage.setItem("ecomjunction-theme", JSON.stringify(theme));
+    localStorage.setItem("shopmatic-theme", JSON.stringify(theme));
     
     // Update CSS variables based on theme
     const root = document.documentElement;

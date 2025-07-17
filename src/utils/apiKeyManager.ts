@@ -7,7 +7,7 @@ export interface APIKeys {
   perplexity?: string;
 }
 
-const STORAGE_KEY = 'ecomjunction_api_keys';
+const STORAGE_KEY = 'shopmatic_api_keys';
 
 export class APIKeyManager {
   private static encrypt(text: string): string {

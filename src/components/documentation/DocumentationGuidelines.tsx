@@ -13,21 +13,21 @@ export function DocumentationGuidelines() {
       <CardHeader>
         <CardTitle>Platform Guidelines</CardTitle>
         <CardDescription>
-          Rules and best practices for using eComJunction
+          Rules and best practices for using Shopmatic
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
           <h3 className="text-lg font-semibold">✅ Affiliate Disclosure Requirements</h3>
           <p className="mt-2">
-            All pages created on eComJunction automatically include an affiliate disclosure in compliance with FTC guidelines and similar regulations worldwide. This disclosure informs visitors that links on the page are affiliate links, and that the page owner may receive a commission from purchases made through these links.
+            All pages created on Shopmatic automatically include an affiliate disclosure in compliance with FTC guidelines and similar regulations worldwide. This disclosure informs visitors that links on the page are affiliate links, and that the page owner may receive a commission from purchases made through these links.
           </p>
         </div>
         
         <div>
           <h3 className="text-lg font-semibold">🚫 Prohibited Products</h3>
           <p className="mt-2">
-            The following types of products are prohibited from being listed on eComJunction:
+            The following types of products are prohibited from being listed on Shopmatic:
           </p>
           <ul className="list-disc pl-5 space-y-1 mt-2">
             <li>Illegal goods, services, or content in any jurisdiction</li>
@@ -58,7 +58,7 @@ export function DocumentationGuidelines() {
         <div>
           <h3 className="text-lg font-semibold">⚖️ Compliance Requirements</h3>
           <p className="mt-2">
-            Users of eComJunction must comply with:
+            Users of Shopmatic must comply with:
           </p>
           <ul className="list-disc pl-5 space-y-1 mt-2">
             <li>All FTC disclosure requirements and similar regulations in other jurisdictions</li>

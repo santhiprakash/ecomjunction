@@ -11,14 +11,14 @@ export function DocumentationOverview() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>eComJunction: Affiliate Product Showcase Platform</CardTitle>
+        <CardTitle>Shopmatic: Affiliate Product Showcase Platform</CardTitle>
         <CardDescription>
           A SAAS platform for influencers and affiliate marketers
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <p>
-          eComJunction is a powerful SAAS platform designed for influencers and affiliate marketers to showcase and organize their product recommendations. The platform enables users to create personalized showcase pages with their affiliate products, organize them with categories and tags, and share them with their audience.
+          Shopmatic is a powerful SAAS platform designed for influencers and affiliate marketers to showcase and organize their product recommendations. The platform enables users to create personalized showcase pages with their affiliate products, organize them with categories and tags, and share them with their audience.
         </p>
         <h3 className="text-lg font-semibold mt-4">Getting Started</h3>
         <ol className="list-decimal pl-5 space-y-2">
@@ -36,9 +36,9 @@ export function DocumentationOverview() {
         
         <h3 className="text-lg font-semibold mt-4">Brand Information</h3>
         <ul className="list-disc pl-5 space-y-1">
-          <li><strong>Brand Name:</strong> eComJunction</li>
-          <li><strong>Website:</strong> ecomjunction.net</li>
-          <li><strong>Email:</strong> info@ecomjunction.net</li>
+          <li><strong>Brand Name:</strong> Shopmatic</li>
+          <li><strong>Website:</strong> shopmatic.cc</li>
+          <li><strong>Email:</strong> info@shopmatic.cc</li>
           <li><strong>Address:</strong> Shivakrupa Nilayam, TC Palya, Bengaluru, KA, India - 560036</li>
         </ul>
       </CardContent>

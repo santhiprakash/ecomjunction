@@ -13,7 +13,7 @@ export function DocumentationFeatures() {
       <CardHeader>
         <CardTitle>Platform Features</CardTitle>
         <CardDescription>
-          Comprehensive capabilities of the eComJunction platform
+          Comprehensive capabilities of the Shopmatic platform
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">

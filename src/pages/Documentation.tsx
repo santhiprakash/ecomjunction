@@ -12,7 +12,7 @@ export default function Documentation() {
       <Header />
       
       <main className="flex-1 container py-6">
-        <h1 className="text-3xl font-bold mb-6">eComJunction Documentation</h1>
+        <h1 className="text-3xl font-bold mb-6">Shopmatic Documentation</h1>
         
         <Tabs defaultValue="overview">
           <TabsList className="grid w-full grid-cols-3">

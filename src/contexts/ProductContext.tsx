@@ -35,7 +35,7 @@ const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
 export const ProductProvider = ({ children }: { children: React.ReactNode }) => {
   const [products, setProducts] = useState<Product[]>(() => {
-    const savedProducts = localStorage.getItem("ecomjunction-products");
+    const savedProducts = localStorage.getItem("shopmatic-products");
     return savedProducts ? JSON.parse(savedProducts) : sampleProducts;
   });
   
@@ -46,7 +46,7 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
 
   // Save products to localStorage
   useEffect(() => {
-    localStorage.setItem("ecomjunction-products", JSON.stringify(products));
+    localStorage.setItem("shopmatic-products", JSON.stringify(products));
   }, [products]);
 
   // Get all unique categories and tags

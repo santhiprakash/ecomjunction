@@ -9,7 +9,7 @@ export default function Footer() {
       <div className="container max-w-6xl mx-auto px-4 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div className="col-span-2 md:col-span-1">
-            <h3 className="text-lg font-semibold bg-gradient-to-r from-primary to-brand bg-clip-text text-transparent">eComJunction</h3>
+            <h3 className="text-lg font-semibold bg-gradient-to-r from-primary to-brand bg-clip-text text-transparent">Shopmatic</h3>
             <p className="mt-2 text-sm text-muted-foreground">
               The ultimate platform for influencers to showcase and monetize product recommendations.
             </p>
@@ -18,7 +18,7 @@ export default function Footer() {
               Bengaluru, KA, India - 560036
             </p>
             <p className="mt-2 text-sm text-muted-foreground">
-              <a href="mailto:info@ecomjunction.net" className="hover:text-primary">info@ecomjunction.net</a>
+              <a href="mailto:info@shopmatic.cc" className="hover:text-primary">info@shopmatic.cc</a>
             </p>
           </div>
           
@@ -110,7 +110,7 @@ export default function Footer() {
           
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-muted-foreground">
-              © {currentYear} eComJunction. All rights reserved.
+              © {currentYear} Shopmatic. All rights reserved.
             </p>
             <div className="flex items-center gap-6">
               <Link to="/privacy" className="text-xs text-muted-foreground hover:text-primary">
