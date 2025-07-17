@@ -1,14 +1,14 @@
 
-# eComJunction - Affiliate Product Showcase Platform
+# Shopmatic - Affiliate Product Showcase Platform
 ## Comprehensive Planning Document
 
 ### Project Overview
 eComJunction is a SAAS platform designed for influencers and affiliate marketers to showcase and organize their product recommendations. The platform enables users to create personalized showcase pages with their affiliate products, organize them with categories and tags, and share them with their audience.
 
 ### Brand Information
-- **Brand Name:** eComJunction
-- **Website:** ecomjunction.net
-- **Email:** info@ecomjunction.net
+- **Brand Name:** Shopmatic
+- **Website:** shopmatic.cc
+- **Email:** info@shopmatic.cc
 - **Address:** Shivakrupa Nilayam, TC Palya, Bengaluru, KA, India - 560036
 
 ## User Roles & Permissions
