@@ -24,7 +24,7 @@ export default function ProductList() {
   } = useProducts();
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 mt-6">
 
       {filteredProducts.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-12 text-center bg-white dark:bg-gray-800 rounded-lg shadow-sm">
