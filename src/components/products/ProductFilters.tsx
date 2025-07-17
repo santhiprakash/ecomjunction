@@ -140,113 +140,116 @@ export default function ProductFilters() {
       )}
       
       {/* Advanced filters sheet for mobile */}
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="px-3 py-1">
-            {filteredProducts.length} products
-          </Badge>
+      <div className="flex justify-end items-center">
+        <div className="flex items-center gap-3">
+          <ProductControls />
           
-          {filterOptions.rating > 0 && (
-            <Badge variant="outline" className="flex items-center gap-1 px-3 py-1">
-              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-              {filterOptions.rating}+
-              <button 
-                className="ml-1 h-3 w-3 cursor-pointer" 
-                onClick={() => setFilterOptions({...filterOptions, rating: 0})}
-                aria-label="Clear rating filter"
-              >
-                ×
-              </button>
-            </Badge>
-          )}
-          
-          {(filterOptions.priceRange[0] > 0 || filterOptions.priceRange[1] < maxPrice) && (
-            <Badge variant="outline" className="px-3 py-1">
-              ₹{filterOptions.priceRange[0]} - ₹{filterOptions.priceRange[1]}
-              <button 
-                className="ml-1 h-3 w-3 cursor-pointer" 
-                onClick={() => setFilterOptions({...filterOptions, priceRange: [0, maxPrice] as [number, number]})}
-                aria-label="Clear price filter"
-              >
-                ×
-              </button>
-            </Badge>
-          )}
-        </div>
-        
-        <ProductControls />
-      </div>
-        
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button variant="outline" size="sm" className="gap-2">
-            <Filter className="h-4 w-4" />
-            Advanced Filters
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="right">
-          <SheetHeader>
-            <SheetTitle>Advanced Filters</SheetTitle>
-          </SheetHeader>
-          
-          <div className="py-6 space-y-6">
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-medium">Price Range</h3>
-                <div className="text-sm">
-                  ₹{priceValues[0]} - ₹{priceValues[1]}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="sm" className="gap-2">
+                <Filter className="h-4 w-4" />
+                Advanced Filters
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right">
+              <SheetHeader>
+                <SheetTitle>Advanced Filters</SheetTitle>
+              </SheetHeader>
+              
+              <div className="py-6 space-y-6">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-medium">Price Range</h3>
+                    <div className="text-sm">
+                      ₹{priceValues[0]} - ₹{priceValues[1]}
+                    </div>
+                  </div>
+                  <Slider
+                    min={0}
+                    max={maxPrice}
+                    step={100}
+                    value={priceValues}
+                    onValueChange={handlePriceChange}
+                    className="mb-6"
+                  />
+                </div>
+                
+                <Separator />
+                
+                <div>
+                  <h3 className="text-sm font-medium mb-4">Minimum Rating</h3>
+                  <div className="flex gap-2">
+                    {[1, 2, 3, 4, 5].map(rating => (
+                      <Button
+                        key={rating}
+                        variant={tempFilters.rating === rating ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => handleRatingChange(rating)}
+                        className="flex-1 px-0"
+                      >
+                        {rating}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+                
+                <Separator />
+                
+                <div>
+                  <h3 className="text-sm font-medium mb-4">Active Filters</h3>
+                  <div className="space-y-3">
+                    {filterOptions.rating > 0 && (
+                      <Badge variant="outline" className="flex items-center gap-1 px-3 py-1 w-fit">
+                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                        {filterOptions.rating}+
+                        <button 
+                          className="ml-1 h-3 w-3 cursor-pointer" 
+                          onClick={() => setFilterOptions({...filterOptions, rating: 0})}
+                          aria-label="Clear rating filter"
+                        >
+                          ×
+                        </button>
+                      </Badge>
+                    )}
+                    
+                    {(filterOptions.priceRange[0] > 0 || filterOptions.priceRange[1] < maxPrice) && (
+                      <Badge variant="outline" className="px-3 py-1 w-fit">
+                        ₹{filterOptions.priceRange[0]} - ₹{filterOptions.priceRange[1]}
+                        <button 
+                          className="ml-1 h-3 w-3 cursor-pointer" 
+                          onClick={() => setFilterOptions({...filterOptions, priceRange: [0, maxPrice] as [number, number]})}
+                          aria-label="Clear price filter"
+                        >
+                          ×
+                        </button>
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+                
+                <Separator />
+                
+                <div className="flex items-center justify-between pt-4">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={handleClearFilters}
+                  >
+                    Reset
+                  </Button>
+                  
+                  <Button 
+                    size="sm"
+                    onClick={handleApplyFilters}
+                  >
+                    Apply Filters
+                  </Button>
                 </div>
               </div>
-              <Slider
-                min={0}
-                max={maxPrice}
-                step={100}
-                value={priceValues}
-                onValueChange={handlePriceChange}
-                className="mb-6"
-              />
-            </div>
-            
-            <Separator />
-            
-            <div>
-              <h3 className="text-sm font-medium mb-4">Minimum Rating</h3>
-              <div className="flex gap-2">
-                {[1, 2, 3, 4, 5].map(rating => (
-                  <Button
-                    key={rating}
-                    variant={tempFilters.rating === rating ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => handleRatingChange(rating)}
-                    className="flex-1 px-0"
-                  >
-                    {rating}
-                  </Button>
-                ))}
-              </div>
-            </div>
-            
-            <Separator />
-            
-            <div className="flex items-center justify-between pt-4">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={handleClearFilters}
-              >
-                Reset
-              </Button>
-              
-              <Button 
-                size="sm"
-                onClick={handleApplyFilters}
-              >
-                Apply Filters
-              </Button>
-            </div>
-          </div>
-        </SheetContent>
-      </Sheet>
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
     </div>
   );
 }
