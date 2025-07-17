@@ -116,37 +116,28 @@ export default function Index() {
           </div>
         </section>
 
-        {/* Tag Filters Section */}
-        <section className="bg-gray-50/50 border-b">
-          <div className="container max-w-6xl mx-auto px-4 py-6">
-            <div className="flex flex-wrap gap-2">
-              {tags.map((tag) => (
-                <Badge
-                  key={tag}
-                  variant="secondary"
-                  className="cursor-pointer hover:bg-blue-100 hover:text-blue-700 transition-colors"
-                >
-                  {tag}
-                </Badge>
-              ))}
+        {/* Tag Filters Section - Only show when category is selected */}
+        {selectedCategory !== "All Products" && (
+          <section className="bg-gray-50/50 border-b">
+            <div className="container max-w-6xl mx-auto px-4 py-6">
+              <div className="flex flex-wrap gap-2">
+                {tags.map((tag) => (
+                  <Badge
+                    key={tag}
+                    variant="secondary"
+                    className="cursor-pointer hover:bg-blue-100 hover:text-blue-700 transition-colors"
+                  >
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Products Section */}
         <section className="py-8">
           <div className="container max-w-6xl mx-auto px-4">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900">
-                  {selectedCategory}
-                </h2>
-                <p className="text-gray-600">
-                  {filteredProducts.length} products found
-                </p>
-              </div>
-            </div>
-            
             <ProductFilters />
             <ProductList />
           </div>

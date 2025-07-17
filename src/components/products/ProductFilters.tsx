@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/sheet";
 import { Filter, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
+import ProductControls from "@/components/products/ProductControls";
 
 export default function ProductFilters() {
   const {
@@ -173,77 +174,79 @@ export default function ProductFilters() {
           )}
         </div>
         
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline" size="sm" className="gap-2">
-              <Filter className="h-4 w-4" />
-              Advanced Filters
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="right">
-            <SheetHeader>
-              <SheetTitle>Advanced Filters</SheetTitle>
-            </SheetHeader>
+        <ProductControls />
+      </div>
+        
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button variant="outline" size="sm" className="gap-2">
+            <Filter className="h-4 w-4" />
+            Advanced Filters
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="right">
+          <SheetHeader>
+            <SheetTitle>Advanced Filters</SheetTitle>
+          </SheetHeader>
+          
+          <div className="py-6 space-y-6">
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-medium">Price Range</h3>
+                <div className="text-sm">
+                  ₹{priceValues[0]} - ₹{priceValues[1]}
+                </div>
+              </div>
+              <Slider
+                min={0}
+                max={maxPrice}
+                step={100}
+                value={priceValues}
+                onValueChange={handlePriceChange}
+                className="mb-6"
+              />
+            </div>
             
-            <div className="py-6 space-y-6">
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-medium">Price Range</h3>
-                  <div className="text-sm">
-                    ₹{priceValues[0]} - ₹{priceValues[1]}
-                  </div>
-                </div>
-                <Slider
-                  min={0}
-                  max={maxPrice}
-                  step={100}
-                  value={priceValues}
-                  onValueChange={handlePriceChange}
-                  className="mb-6"
-                />
-              </div>
-              
-              <Separator />
-              
-              <div>
-                <h3 className="text-sm font-medium mb-4">Minimum Rating</h3>
-                <div className="flex gap-2">
-                  {[1, 2, 3, 4, 5].map(rating => (
-                    <Button
-                      key={rating}
-                      variant={tempFilters.rating === rating ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => handleRatingChange(rating)}
-                      className="flex-1 px-0"
-                    >
-                      {rating}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-              
-              <Separator />
-              
-              <div className="flex items-center justify-between pt-4">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={handleClearFilters}
-                >
-                  Reset
-                </Button>
-                
-                <Button 
-                  size="sm"
-                  onClick={handleApplyFilters}
-                >
-                  Apply Filters
-                </Button>
+            <Separator />
+            
+            <div>
+              <h3 className="text-sm font-medium mb-4">Minimum Rating</h3>
+              <div className="flex gap-2">
+                {[1, 2, 3, 4, 5].map(rating => (
+                  <Button
+                    key={rating}
+                    variant={tempFilters.rating === rating ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handleRatingChange(rating)}
+                    className="flex-1 px-0"
+                  >
+                    {rating}
+                  </Button>
+                ))}
               </div>
             </div>
-          </SheetContent>
-        </Sheet>
-      </div>
+            
+            <Separator />
+            
+            <div className="flex items-center justify-between pt-4">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={handleClearFilters}
+              >
+                Reset
+              </Button>
+              
+              <Button 
+                size="sm"
+                onClick={handleApplyFilters}
+              >
+                Apply Filters
+              </Button>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
