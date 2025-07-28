@@ -38,6 +38,37 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30">
+      <style>{`
+        .hero-button-wrapper button {
+          background: rgba(255, 255, 255, 0.15) !important;
+          border: 1px solid rgba(255, 255, 255, 0.3) !important;
+          color: white !important;
+          backdrop-filter: blur(8px) !important;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+          transition: all 0.2s ease !important;
+          font-size: 0.875rem !important;
+          min-height: 2.5rem !important;
+        }
+
+        .hero-button-wrapper button:hover {
+          background: rgba(255, 255, 255, 0.95) !important;
+          color: #1f2937 !important;
+          transform: scale(1.05) !important;
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        .hero-button-wrapper button svg {
+          color: inherit !important;
+        }
+
+        @media (max-width: 768px) {
+          .hero-button-wrapper button {
+            font-size: 0.8rem !important;
+            padding: 0.5rem 0.75rem !important;
+            min-height: 2.25rem !important;
+          }
+        }
+      `}</style>
       <Header />
       
       <main className="flex-1">
@@ -80,17 +111,23 @@ export default function Index() {
                 )}
               </div>
               
-              <div className="flex items-center gap-3">
-                <SocialMediaManager />
-                <ThemeCustomizer />
+              <div className="flex flex-wrap items-center justify-center md:justify-end gap-2 md:gap-3">
+                <div className="hero-button-wrapper">
+                  <SocialMediaManager />
+                </div>
+                <div className="hero-button-wrapper">
+                  <ThemeCustomizer />
+                </div>
                 <Button
                   variant="outline"
-                  className="bg-white/10 border-white/30 text-white hover:bg-white hover:text-gray-900 hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl backdrop-blur-sm"
+                  className="bg-white/10 border-white/30 text-white hover:bg-white hover:text-gray-900 hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl backdrop-blur-sm text-sm"
                 >
                   <Share2 className="mr-2 h-4 w-4" />
                   Share Profile
                 </Button>
-                <AddProductForm />
+                <div className="hero-button-wrapper">
+                  <AddProductForm />
+                </div>
               </div>
             </div>
           </div>
