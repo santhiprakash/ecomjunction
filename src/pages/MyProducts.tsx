@@ -7,6 +7,8 @@ import ProductCard from "@/components/products/ProductCard";
 import ProductListItem from "@/components/products/ProductListItem";
 import AddProductForm from "@/components/products/AddProductForm";
 import ThemeCustomizer from "@/components/theme/ThemeCustomizer";
+import AffiliateIdManager from "@/components/affiliate/AffiliateIdManager";
+import BulkProductImport from "@/components/products/BulkProductImport";
 import DemoBanner from "@/components/auth/DemoBanner";
 import { toast } from "sonner";
 import {
@@ -98,6 +100,8 @@ export default function MyProducts() {
           </div>
           
           <div className="flex items-center gap-4">
+            <AffiliateIdManager />
+            <BulkProductImport />
             <ThemeCustomizer />
             <AddProductForm />
           </div>

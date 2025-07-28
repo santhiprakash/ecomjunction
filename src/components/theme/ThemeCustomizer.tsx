@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Palette } from "lucide-react";
 
 export default function ThemeCustomizer() {
@@ -43,11 +44,31 @@ export default function ThemeCustomizer() {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="icon" className="flex items-center justify-center">
-          <Palette className="h-5 w-5" />
-        </Button>
-      </DialogTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DialogTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="relative flex items-center justify-center border-2 border-primary/20 bg-background/80 backdrop-blur-sm hover:bg-primary/10 hover:border-primary/40 transition-all duration-200 shadow-sm hover:shadow-md"
+              style={{
+                background: `linear-gradient(135deg, ${theme.primaryColor}15, ${theme.secondaryColor}15)`,
+                borderColor: `${theme.primaryColor}40`
+              }}
+            >
+              <Palette
+                className="h-5 w-5 transition-colors duration-200"
+                style={{ color: theme.primaryColor }}
+              />
+              <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-background"
+                   style={{ backgroundColor: theme.accentColor }} />
+            </Button>
+          </DialogTrigger>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Customize Theme Colors</p>
+        </TooltipContent>
+      </Tooltip>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Customize Theme</DialogTitle>
@@ -62,8 +83,11 @@ export default function ThemeCustomizer() {
             </Label>
             <div className="col-span-3 flex items-center gap-2">
               <div
-                className="h-6 w-6 rounded-md border"
-                style={{ backgroundColor: localTheme.primaryColor }}
+                className="h-6 w-6 rounded-md border-2 border-border shadow-sm"
+                style={{
+                  backgroundColor: localTheme.primaryColor,
+                  borderColor: localTheme.primaryColor === '#FFFFFF' || localTheme.primaryColor === '#ffffff' ? '#e5e7eb' : 'transparent'
+                }}
               />
               <Input
                 id="primaryColor"
@@ -85,8 +109,11 @@ export default function ThemeCustomizer() {
             </Label>
             <div className="col-span-3 flex items-center gap-2">
               <div
-                className="h-6 w-6 rounded-md border"
-                style={{ backgroundColor: localTheme.secondaryColor }}
+                className="h-6 w-6 rounded-md border-2 border-border shadow-sm"
+                style={{
+                  backgroundColor: localTheme.secondaryColor,
+                  borderColor: localTheme.secondaryColor === '#FFFFFF' || localTheme.secondaryColor === '#ffffff' ? '#e5e7eb' : 'transparent'
+                }}
               />
               <Input
                 id="secondaryColor"
@@ -108,8 +135,11 @@ export default function ThemeCustomizer() {
             </Label>
             <div className="col-span-3 flex items-center gap-2">
               <div
-                className="h-6 w-6 rounded-md border"
-                style={{ backgroundColor: localTheme.accentColor }}
+                className="h-6 w-6 rounded-md border-2 border-border shadow-sm"
+                style={{
+                  backgroundColor: localTheme.accentColor,
+                  borderColor: localTheme.accentColor === '#FFFFFF' || localTheme.accentColor === '#ffffff' ? '#e5e7eb' : 'transparent'
+                }}
               />
               <Input
                 id="accentColor"
@@ -131,8 +161,11 @@ export default function ThemeCustomizer() {
             </Label>
             <div className="col-span-3 flex items-center gap-2">
               <div
-                className="h-6 w-6 rounded-md border"
-                style={{ backgroundColor: localTheme.textColor }}
+                className="h-6 w-6 rounded-md border-2 border-border shadow-sm"
+                style={{
+                  backgroundColor: localTheme.textColor,
+                  borderColor: localTheme.textColor === '#FFFFFF' || localTheme.textColor === '#ffffff' ? '#e5e7eb' : 'transparent'
+                }}
               />
               <Input
                 id="textColor"
@@ -154,8 +187,11 @@ export default function ThemeCustomizer() {
             </Label>
             <div className="col-span-3 flex items-center gap-2">
               <div
-                className="h-6 w-6 rounded-md border"
-                style={{ backgroundColor: localTheme.backgroundColor }}
+                className="h-6 w-6 rounded-md border-2 border-border shadow-sm"
+                style={{
+                  backgroundColor: localTheme.backgroundColor,
+                  borderColor: localTheme.backgroundColor === '#FFFFFF' || localTheme.backgroundColor === '#ffffff' ? '#e5e7eb' : 'transparent'
+                }}
               />
               <Input
                 id="backgroundColor"

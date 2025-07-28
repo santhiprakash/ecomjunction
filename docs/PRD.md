@@ -36,15 +36,21 @@ Shopmatic is a SaaS platform for influencers and affiliate marketers to create, 
 - Registration (email/social login)
 - Email verification
 - Profile setup (username, bio, avatar, social links)
+- **Social media handles connection (Instagram, Twitter, YouTube, TikTok, LinkedIn)**
 - Role-based access and feature gating
+- **Real-time profile updates and synchronization**
 
 ### 4.2. Product Management
 - Add product (manual or via affiliate URL parsing)
+- **Bulk product import from multiple URLs**
+- **Automatic affiliate ID injection for supported platforms**
 - Edit, delete, and organize products
 - Bulk operations (edit, delete, categorize)
 - Tag and category management
 - Set commission rates (optional)
 - Product status (active/inactive)
+- **Affiliate ID management for Amazon, Flipkart, Myntra, Nykaa**
+- **Quick product addition with AI-powered extraction**
 
 ### 4.3. Showcase Management
 - Personalized showcase page per user
@@ -58,7 +64,9 @@ Shopmatic is a SaaS platform for influencers and affiliate marketers to create, 
 - System analytics for admins
 
 ### 4.5. Customization
-- Theme customizer (colors, layout)
+- **Enhanced theme customizer with improved visibility**
+- **Real-time color preview with better white color handling**
+- **Tooltip-enabled theme selector with gradient backgrounds**
 - Advanced customization for Pro/Enterprise
 
 ### 4.6. Notifications
@@ -69,6 +77,27 @@ Shopmatic is a SaaS platform for influencers and affiliate marketers to create, 
 - All forms and dialogs are accessible (labels, ARIA, keyboard navigation)
 - GDPR/CCPA compliance (data export/delete, cookie consent)
 - FTC affiliate disclosure on all showcase pages
+
+### 4.8. Social Media Integration
+- **Complete social media handles management system**
+- **Support for Instagram, Twitter/X, YouTube, TikTok, LinkedIn**
+- **Interactive social media manager with validation**
+- **Multiple display variants (icons-only, compact, full)**
+- Display social media handles on showcase pages
+- Social media verification badges
+- Cross-platform sharing capabilities
+- **Real-time social media link validation**
+- Social media analytics integration (future)
+
+### 4.9. Affiliate Management System
+- **Multi-platform affiliate ID management**
+- **Automatic affiliate URL injection for Amazon, Flipkart, Myntra, Nykaa**
+- **Bulk product import with affiliate ID application**
+- **Platform-specific URL formatting and validation**
+- **Affiliate ID tracking and association with products**
+- **Support for up to 20 URLs per bulk import batch**
+- **Real-time progress tracking for bulk operations**
+- **Error handling and retry mechanisms for failed imports**
 
 ---
 
@@ -83,12 +112,14 @@ Shopmatic is a SaaS platform for influencers and affiliate marketers to create, 
 - React Query for data fetching
 - React Hook Form for form management
 
-### 5.2. Backend (Planned)
-- Node.js (Express/Fastify)
-- PostgreSQL
-- Redis for caching
-- JWT for authentication
-- Cloudinary for image management
+### 5.2. Backend
+- **Supabase for backend-as-a-service**
+- **PostgreSQL database with Row Level Security (RLS)**
+- **Real-time authentication and user management**
+- **Automatic database triggers and functions**
+- **Email authentication with verification**
+- **Social media links and affiliate ID storage**
+- Cloudinary for image management (planned)
 
 ### 5.3. Infrastructure (Planned)
 - AWS/Vercel for hosting
@@ -128,11 +159,18 @@ Shopmatic is a SaaS platform for influencers and affiliate marketers to create, 
 
 ## 9. Open Issues & Next Steps
 
-- Complete backend integration for user/product management and analytics
-- Implement authentication and role-based access control
+- **✅ Completed: Supabase integration with authentication and database**
+- **✅ Completed: Social media handles management system**
+- **✅ Completed: Enhanced theme customizer with improved UX**
+- **✅ Completed: Affiliate ID management and bulk import system**
+- Complete migration from localStorage to Supabase for product data
+- Implement real-time analytics dashboard
+- Add email verification and password reset flows
 - Expand test coverage (unit, integration, e2e)
 - Continue accessibility improvements for all forms and interactive components
-- Finalize documentation for contributors and users
+- Add support for more affiliate platforms
+- Implement social media verification system
+- Add advanced bulk import features (CSV, Excel support)
 
 ---
 

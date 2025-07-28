@@ -2,6 +2,7 @@
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ThemeCustomizer from "@/components/theme/ThemeCustomizer";
+import SocialMediaManager from "@/components/profile/SocialMediaManager";
 import DemoBanner from "@/components/auth/DemoBanner";
 import { useProducts } from "@/contexts/ProductContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -81,8 +82,11 @@ export default function Dashboard() {
               Track your affiliate marketing performance
             </p>
           </div>
-          
-          <ThemeCustomizer />
+
+          <div className="flex items-center gap-4">
+            <SocialMediaManager />
+            <ThemeCustomizer />
+          </div>
         </div>
         
         <div className="grid gap-4 md:grid-cols-3">

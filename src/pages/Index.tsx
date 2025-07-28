@@ -6,14 +6,18 @@ import ProductList from "@/components/products/ProductList";
 import ProductFilters from "@/components/products/ProductFilters";
 import AddProductForm from "@/components/products/AddProductForm";
 import ThemeCustomizer from "@/components/theme/ThemeCustomizer";
+import SocialMediaManager from "@/components/profile/SocialMediaManager";
+import { SocialMediaQuickLinks } from "@/components/profile/SocialMediaDisplay";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Share2, Search, Grid3X3, List, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Index() {
   const { filteredProducts } = useProducts();
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCategory, setSelectedCategory] = useState("All Products");
@@ -56,7 +60,7 @@ export default function Index() {
                 <p className="text-xl text-blue-100 mb-4">
                   Curating the best products for modern living
                 </p>
-                <div className="flex flex-wrap gap-4 justify-center md:justify-start text-sm">
+                <div className="flex flex-wrap gap-4 justify-center md:justify-start text-sm mb-4">
                   <span className="flex items-center gap-1">
                     <span className="font-semibold">2.4k</span> Products
                   </span>
@@ -67,9 +71,17 @@ export default function Index() {
                     <span className="font-semibold">89%</span> Success Rate
                   </span>
                 </div>
+
+                {/* Social Media Links */}
+                {user?.socialLinks && Object.keys(user.socialLinks).length > 0 && (
+                  <div className="flex justify-center md:justify-start">
+                    <SocialMediaQuickLinks socialLinks={user.socialLinks} />
+                  </div>
+                )}
               </div>
               
               <div className="flex items-center gap-3">
+                <SocialMediaManager />
                 <ThemeCustomizer />
                 <Button variant="outline" className="bg-white/10 border-white/30 text-white hover:bg-white/20">
                   <Share2 className="mr-2 h-4 w-4" />

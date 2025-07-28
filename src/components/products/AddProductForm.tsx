@@ -26,6 +26,9 @@ import { PlusCircle, X, Zap, Settings } from "lucide-react";
 import { APIKeyManager } from "@/utils/apiKeyManager";
 import QuickAddForm from "./QuickAddForm";
 import APIKeySetup from "./APIKeySetup";
+import BulkProductImport from "./BulkProductImport";
+import AffiliateIdManager from "@/components/affiliate/AffiliateIdManager";
+import { AffiliateUrlService } from "@/services/AffiliateUrlService";
 
 const INITIAL_FORM_DATA: ProductFormData = {
   title: "",
@@ -139,29 +142,45 @@ export default function AddProductForm() {
     toast.success("Product data extracted! Please review and save.");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.title || !formData.description || !formData.link || !formData.image) {
       toast.error("Please fill all required fields");
       return;
     }
-    
+
     if (formData.categories.length === 0) {
       toast.error("Please add at least one category");
       return;
     }
-    
+
     if (formData.tags.length === 0) {
       toast.error("Please add at least one tag");
       return;
     }
-    
-    addProduct(formData);
-    setFormData({ ...INITIAL_FORM_DATA });
-    setAddMode('quick');
-    setOpen(false);
-    toast.success("Product added successfully!");
+
+    try {
+      let finalFormData = { ...formData };
+
+      // Inject affiliate ID if user is authenticated and not in demo mode
+      if (user && !user.isDemo) {
+        const affiliateResult = await AffiliateUrlService.injectAffiliateId(user.id, formData.link);
+        if (affiliateResult.affiliateUrl !== formData.link) {
+          finalFormData.link = affiliateResult.affiliateUrl;
+          toast.success("Affiliate ID applied to product link!");
+        }
+      }
+
+      addProduct(finalFormData);
+      setFormData({ ...INITIAL_FORM_DATA });
+      setAddMode('quick');
+      setOpen(false);
+      toast.success("Product added successfully!");
+    } catch (error) {
+      console.error('Error adding product:', error);
+      toast.error("Failed to add product");
+    }
   };
 
   const handleOpenDialog = () => {
@@ -463,13 +482,14 @@ export default function AddProductForm() {
   );
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button onClick={handleOpenDialog}>
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Add Product
-        </Button>
-      </DialogTrigger>
+    <>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button onClick={handleOpenDialog}>
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Add Product
+          </Button>
+        </DialogTrigger>
       <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
@@ -497,15 +517,22 @@ export default function AddProductForm() {
             )}
           </DialogTitle>
           <DialogDescription>
-            {addMode === 'quick' 
+            {addMode === 'quick'
               ? "Paste any product URL and let AI extract the details automatically."
               : "Enter the details of the affiliate product you want to add."
             }
           </DialogDescription>
         </DialogHeader>
 
+        {/* Additional Actions */}
+        <div className="flex gap-2 pb-4 border-b">
+          <AffiliateIdManager />
+          <BulkProductImport />
+        </div>
+
         {addMode === 'quick' ? renderQuickAddMode() : renderAdvancedMode()}
       </DialogContent>
     </Dialog>
+    </>
   );
 }
