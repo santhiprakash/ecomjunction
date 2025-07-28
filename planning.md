@@ -201,12 +201,22 @@ CREATE TABLE analytics (
 - React Query for data fetching
 - React Hook Form for form management
 
-### Backend (Future)
-- Node.js with Express/Fastify
-- PostgreSQL database
-- Redis for caching
-- JWT for authentication
-- Cloudinary for image management
+### Backend (Current)
+- **Supabase**: Complete backend-as-a-service solution
+  - PostgreSQL database with Row Level Security
+  - Built-in authentication with email and social providers
+  - Real-time subscriptions
+  - Edge functions for serverless computing
+  - Storage for file uploads
+
+### Database Schema (Implemented)
+- **users**: User profiles with theme settings and social links
+- **affiliate_ids**: Platform-specific affiliate ID management (Amazon, Flipkart, etc.)
+- **products**: Product catalog with affiliate tracking and commission data
+- **categories**: User-defined product categories with color coding
+- **analytics**: Click tracking, conversions, and performance metrics
+- **RLS Policies**: Secure data access with user-specific permissions
+- **Triggers**: Automatic timestamp updates and user creation handling
 
 ### Infrastructure (Future)
 - AWS/Vercel for hosting
