@@ -30,9 +30,13 @@ export default function ProductListItem({ product, onRemove }: ProductListItemPr
             <span className="text-sm font-medium">{product.rating}</span>
           </div>
           
-          <div className="flex flex-wrap gap-1">
+          <div className="flex flex-wrap gap-1.5">
             {product.tags.map(tag => (
-              <Badge key={tag} variant="secondary" className="text-xs px-2 py-0 rounded-full">
+              <Badge
+                key={tag}
+                variant="secondary"
+                className="text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20 border-primary/20"
+              >
                 {tag}
               </Badge>
             ))}

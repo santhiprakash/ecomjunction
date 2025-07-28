@@ -9,10 +9,10 @@ type ThemeContextType = {
 };
 
 const defaultTheme: ThemeSettings = {
-  primaryColor: "#3B82F6", // blue-500
-  secondaryColor: "#F472B6", // pink-400
-  accentColor: "#10B981", // emerald-500
-  textColor: "#111827", // gray-900
+  primaryColor: "#6366F1", // indigo-500 - more vibrant and modern
+  secondaryColor: "#EC4899", // pink-500 - deeper pink for better contrast
+  accentColor: "#059669", // emerald-600 - deeper green for better visibility
+  textColor: "#1F2937", // gray-800 - slightly lighter for better readability
   backgroundColor: "#FFFFFF", // white
 };
 

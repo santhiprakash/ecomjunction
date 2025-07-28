@@ -50,23 +50,33 @@ export default function ThemeCustomizer() {
             <Button
               variant="outline"
               size="icon"
-              className="relative flex items-center justify-center border-2 border-primary/20 bg-background/80 backdrop-blur-sm hover:bg-primary/10 hover:border-primary/40 transition-all duration-200 shadow-sm hover:shadow-md"
+              className="relative flex items-center justify-center border-2 bg-white/90 backdrop-blur-sm hover:bg-white hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl group"
               style={{
-                background: `linear-gradient(135deg, ${theme.primaryColor}15, ${theme.secondaryColor}15)`,
-                borderColor: `${theme.primaryColor}40`
+                background: `linear-gradient(135deg, ${theme.primaryColor}20, ${theme.secondaryColor}20, ${theme.accentColor}20)`,
+                borderColor: `${theme.primaryColor}60`,
+                boxShadow: `0 4px 12px ${theme.primaryColor}20`
               }}
             >
               <Palette
-                className="h-5 w-5 transition-colors duration-200"
+                className="h-5 w-5 transition-all duration-200 group-hover:scale-110"
                 style={{ color: theme.primaryColor }}
               />
-              <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-background"
+              <div className="absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-white shadow-sm"
                    style={{ backgroundColor: theme.accentColor }} />
+
+              {/* Color preview dots */}
+              <div className="absolute -bottom-1 -left-1 flex gap-0.5">
+                <div className="w-1.5 h-1.5 rounded-full border border-white/50"
+                     style={{ backgroundColor: theme.primaryColor }} />
+                <div className="w-1.5 h-1.5 rounded-full border border-white/50"
+                     style={{ backgroundColor: theme.secondaryColor }} />
+              </div>
             </Button>
           </DialogTrigger>
         </TooltipTrigger>
-        <TooltipContent>
-          <p>Customize Theme Colors</p>
+        <TooltipContent side="bottom" className="bg-gray-900 text-white border-gray-700">
+          <p className="font-medium">Customize Theme Colors</p>
+          <p className="text-xs text-gray-300">Click to personalize your store</p>
         </TooltipContent>
       </Tooltip>
       <DialogContent className="sm:max-w-[425px]">

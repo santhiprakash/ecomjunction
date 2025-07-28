@@ -83,7 +83,10 @@ export default function Index() {
               <div className="flex items-center gap-3">
                 <SocialMediaManager />
                 <ThemeCustomizer />
-                <Button variant="outline" className="bg-white/10 border-white/30 text-white hover:bg-white/20">
+                <Button
+                  variant="outline"
+                  className="bg-white/10 border-white/30 text-white hover:bg-white hover:text-gray-900 hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl backdrop-blur-sm"
+                >
                   <Share2 className="mr-2 h-4 w-4" />
                   Share Profile
                 </Button>
