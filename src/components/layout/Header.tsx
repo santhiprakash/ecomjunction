@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useAuth } from "@/contexts/AuthContext";
+import AuthModal from "@/components/auth/AuthModal";
 import { 
   NavigationMenu,
   NavigationMenuContent,
@@ -25,14 +27,15 @@ import {
   SheetTrigger,
   SheetClose
 } from "@/components/ui/sheet";
-import { Sun, Moon, User, Settings, BarChart, ShoppingBag, Menu } from "lucide-react";
+import { Sun, Moon, User, Settings, BarChart, ShoppingBag, Menu, Crown, Sparkles } from "lucide-react";
 
 export default function Header() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authModalTab, setAuthModalTab] = useState<'login' | 'register'>('login');
   const { resetTheme } = useTheme();
-  // This would come from auth context in a real application
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { user, isAuthenticated, logout, isDemo } = useAuth();
 
   // Add scroll effect for header
   useEffect(() => {
@@ -72,7 +75,7 @@ export default function Header() {
             </NavigationMenuItem>
             
             {/* Only show these items for logged-in users */}
-            {isLoggedIn && (
+            {isAuthenticated && (
               <>
                 <NavigationMenuItem>
                   <Link to="/dashboard" className={navigationMenuTriggerStyle()}>
@@ -142,24 +145,57 @@ export default function Header() {
           {/* User menu dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full">
+              <Button variant="ghost" size="icon" className="rounded-full relative">
                 <User className="h-5 w-5" />
+                {isDemo && (
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full flex items-center justify-center">
+                    <Sparkles className="h-2 w-2 text-white" />
+                  </div>
+                )}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              {isLoggedIn ? (
+            <DropdownMenuContent align="end" className="w-64">
+              {isAuthenticated ? (
                 <>
+                  {/* User info header */}
+                  <div className="px-2 py-2 border-b">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        {user?.name?.charAt(0).toUpperCase() || 'U'}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1">
+                          <p className="text-sm font-medium truncate">
+                            {user?.name || 'User'}
+                          </p>
+                          {isDemo && <Sparkles className="h-3 w-3 text-blue-500" />}
+                          {user?.plan === 'pro' && <Crown className="h-3 w-3 text-yellow-500" />}
+                        </div>
+                        <p className="text-xs text-muted-foreground truncate">
+                          {user?.email}
+                        </p>
+                        {isDemo && (
+                          <p className="text-xs text-blue-600 font-medium">Demo Mode</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
                   <DropdownMenuItem className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
                     <span>Profile</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <ShoppingBag className="mr-2 h-4 w-4" />
-                    <span>My Products</span>
+                  <DropdownMenuItem className="cursor-pointer" asChild>
+                    <Link to="/my-products">
+                      <ShoppingBag className="mr-2 h-4 w-4" />
+                      <span>My Products</span>
+                    </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <BarChart className="mr-2 h-4 w-4" />
-                    <span>Analytics</span>
+                  <DropdownMenuItem className="cursor-pointer" asChild>
+                    <Link to="/analytics">
+                      <BarChart className="mr-2 h-4 w-4" />
+                      <span>Analytics</span>
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem className="cursor-pointer">
@@ -170,21 +206,39 @@ export default function Header() {
                     <Sun className="mr-2 h-4 w-4" />
                     <span>Reset Theme</span>
                   </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer" asChild>
+                    <Link to="/privacy-settings">
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Privacy Settings</span>
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem 
                     className="cursor-pointer text-red-500 focus:text-red-500"
-                    onClick={() => setIsLoggedIn(false)}
+                    onClick={logout}
                   >
                     Sign out
                   </DropdownMenuItem>
                 </>
               ) : (
                 <>
-                  <DropdownMenuItem className="cursor-pointer" onClick={() => setIsLoggedIn(true)}>
+                  <DropdownMenuItem 
+                    className="cursor-pointer" 
+                    onClick={() => {
+                      setAuthModalTab('login');
+                      setShowAuthModal(true);
+                    }}
+                  >
                     <User className="mr-2 h-4 w-4" />
                     <span>Sign In</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
+                  <DropdownMenuItem 
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setAuthModalTab('register');
+                      setShowAuthModal(true);
+                    }}
+                  >
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Register</span>
                   </DropdownMenuItem>
@@ -211,7 +265,7 @@ export default function Header() {
                     <Link to="/" className="py-2 text-base">Home</Link>
                   </SheetClose>
                   
-                  {isLoggedIn && (
+                  {isAuthenticated && (
                     <>
                       <SheetClose asChild>
                         <Link to="/dashboard" className="py-2 text-base">Dashboard</Link>
@@ -231,18 +285,38 @@ export default function Header() {
                 </nav>
                 
                 <div className="mt-auto space-y-4">
-                  {!isLoggedIn ? (
+                  {!isAuthenticated ? (
                     <div className="flex flex-col gap-2">
-                      <Button onClick={() => setIsLoggedIn(true)}>Sign In</Button>
-                      <Button variant="outline">Register</Button>
+                      <Button onClick={() => {
+                        setAuthModalTab('login');
+                        setShowAuthModal(true);
+                      }}>Sign In</Button>
+                      <Button variant="outline" onClick={() => {
+                        setAuthModalTab('register');
+                        setShowAuthModal(true);
+                      }}>Register</Button>
                     </div>
                   ) : (
-                    <Button 
-                      variant="destructive"
-                      onClick={() => setIsLoggedIn(false)}
-                    >
-                      Sign Out
-                    </Button>
+                    <div className="space-y-2">
+                      {user && (
+                        <div className="flex items-center gap-2 p-2 bg-muted rounded">
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                            {user.name?.charAt(0).toUpperCase()}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium truncate">{user.name}</p>
+                            {isDemo && <p className="text-xs text-blue-600">Demo Mode</p>}
+                          </div>
+                        </div>
+                      )}
+                      <Button 
+                        variant="destructive"
+                        onClick={logout}
+                        className="w-full"
+                      >
+                        Sign Out
+                      </Button>
+                    </div>
                   )}
                 </div>
               </div>
@@ -250,6 +324,13 @@ export default function Header() {
           </Sheet>
         </div>
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal 
+        open={showAuthModal} 
+        onOpenChange={setShowAuthModal}
+        defaultTab={authModalTab}
+      />
     </header>
   );
 }

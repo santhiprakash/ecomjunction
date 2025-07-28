@@ -27,7 +27,7 @@ export default function APIKeySetup({ onSetupComplete }: APIKeySetupProps) {
 
     try {
       // Save the key temporarily to test it
-      APIKeyManager.setKeys({ openai: openaiKey.trim() });
+      await APIKeyManager.setKeys({ openai: openaiKey.trim() });
 
       // Test the API key
       const isValid = await OpenAIService.isServiceAvailable();

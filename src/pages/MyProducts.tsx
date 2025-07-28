@@ -7,6 +7,7 @@ import ProductCard from "@/components/products/ProductCard";
 import ProductListItem from "@/components/products/ProductListItem";
 import AddProductForm from "@/components/products/AddProductForm";
 import ThemeCustomizer from "@/components/theme/ThemeCustomizer";
+import DemoBanner from "@/components/auth/DemoBanner";
 import { toast } from "sonner";
 import {
   Grid,
@@ -87,6 +88,7 @@ export default function MyProducts() {
       <Header />
       
       <main className="flex-1 container py-6">
+        <DemoBanner />
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <div>
             <h1 className="text-3xl font-bold">My Products</h1>

@@ -1,5 +1,6 @@
 
 import { APIKeyManager } from '@/utils/apiKeyManager';
+import { RateLimiter, InputSanitizer } from '@/utils/validation';
 
 export interface ProductExtractionResult {
   title: string;
@@ -12,8 +13,8 @@ export interface ProductExtractionResult {
 }
 
 export class OpenAIService {
-  private static getApiKey(): string | null {
-    const keys = APIKeyManager.getKeys();
+  private static async getApiKey(): Promise<string | null> {
+    const keys = await APIKeyManager.getKeys();
     return keys.openai || null;
   }
 
@@ -21,11 +22,21 @@ export class OpenAIService {
     url: string, 
     htmlContent: string
   ): Promise<ProductExtractionResult> {
-    const apiKey = this.getApiKey();
+    // Rate limiting check
+    const rateLimitKey = 'openai-extraction';
+    if (!RateLimiter.isWithinLimit(rateLimitKey, 20, 60000)) { // 20 requests per minute
+      throw new Error('Rate limit exceeded. Please try again later.');
+    }
+    
+    const apiKey = await this.getApiKey();
     
     if (!apiKey) {
       throw new Error('OpenAI API key not configured');
     }
+    
+    // Sanitize inputs
+    const sanitizedUrl = InputSanitizer.sanitizeUrl(url);
+    const sanitizedContent = InputSanitizer.sanitizeText(htmlContent);
 
     const prompt = `
 Extract product information from this HTML content and URL. Return ONLY a valid JSON object with this structure:
@@ -39,8 +50,8 @@ Extract product information from this HTML content and URL. Return ONLY a valid 
   "confidence": number (0-1)
 }
 
-URL: ${url}
-HTML Content: ${htmlContent.substring(0, 4000)}...
+URL: ${sanitizedUrl}
+HTML Content: ${sanitizedContent.substring(0, 4000)}...
 
 Rules:
 - Extract clear, accurate product information
@@ -94,13 +105,23 @@ Rules:
         throw new Error('Incomplete product data extracted');
       }
 
+      // Sanitize extracted data
+      const sanitizedTitle = InputSanitizer.sanitizeText(extracted.title || '');
+      const sanitizedDescription = InputSanitizer.sanitizeText(extracted.description || '');
+      const sanitizedCategories = InputSanitizer.sanitizeStringArray(
+        Array.isArray(extracted.categories) ? extracted.categories : []
+      );
+      const sanitizedTags = InputSanitizer.sanitizeStringArray(
+        Array.isArray(extracted.tags) ? extracted.tags : []
+      );
+
       return {
-        title: extracted.title || '',
-        description: extracted.description || '',
+        title: sanitizedTitle,
+        description: sanitizedDescription,
         price: extracted.price || 0,
         currency: extracted.currency || 'INR',
-        categories: Array.isArray(extracted.categories) ? extracted.categories : [],
-        tags: Array.isArray(extracted.tags) ? extracted.tags : [],
+        categories: sanitizedCategories,
+        tags: sanitizedTags,
         confidence: extracted.confidence || 0.5,
       };
 
@@ -111,7 +132,7 @@ Rules:
   }
 
   static async isServiceAvailable(): Promise<boolean> {
-    const apiKey = this.getApiKey();
+    const apiKey = await this.getApiKey();
     if (!apiKey) return false;
 
     try {

@@ -2,6 +2,8 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { Product, FilterOptions, ViewMode, SortOption, ProductFormData } from "@/types";
 import { v4 as uuidv4 } from "uuid";
+import { InputSanitizer } from "@/utils/validation";
+import { toast } from "sonner";
 
 // Mock data for sample products
 import { sampleProducts } from "@/data/sampleProducts";
@@ -103,14 +105,23 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
     });
 
   const addProduct = (productData: ProductFormData) => {
+    // Validate and sanitize product data
+    const validation = InputSanitizer.validateProduct(productData);
+    
+    if (!validation.success) {
+      toast.error(`Validation failed: ${validation.errors?.join(', ')}`);
+      return;
+    }
+    
     const newProduct: Product = {
-      ...productData,
+      ...validation.data,
       id: uuidv4(),
       rating: 0,
       createdAt: new Date(),
     };
     
     setProducts([...products, newProduct]);
+    toast.success('Product added successfully!');
   };
 
   const removeProduct = (id: string) => {
@@ -118,9 +129,18 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
   };
 
   const updateProduct = (id: string, updatedData: Partial<Product>) => {
+    // Validate and sanitize updated data
+    const validation = InputSanitizer.validateProduct(updatedData);
+    
+    if (!validation.success) {
+      toast.error(`Validation failed: ${validation.errors?.join(', ')}`);
+      return;
+    }
+    
     setProducts(products.map(p => 
-      p.id === id ? { ...p, ...updatedData } : p
+      p.id === id ? { ...p, ...validation.data } : p
     ));
+    toast.success('Product updated successfully!');
   };
 
   const handleSetFilterOptions = (newFilters: Partial<FilterOptions>) => {

@@ -227,6 +227,8 @@ export default function AddProductForm() {
 
   const renderAdvancedMode = () => (
     <form onSubmit={handleSubmit} className="space-y-4 py-4">
+      {/* ARIA live region for error messages */}
+      <div aria-live="assertive" className="sr-only" id="form-error-region"></div>
       <div className="grid grid-cols-1 gap-4">
         <div className="space-y-2">
           <label htmlFor="title" className="text-sm font-medium">
@@ -354,7 +356,11 @@ export default function AddProductForm() {
                 {category}
                 <X
                   className="h-3 w-3 cursor-pointer"
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Remove category ${category}`}
                   onClick={() => handleRemoveCategory(category)}
+                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') handleRemoveCategory(category); }}
                 />
               </Badge>
             ))}
@@ -402,7 +408,11 @@ export default function AddProductForm() {
                 {tag}
                 <X
                   className="h-3 w-3 cursor-pointer"
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Remove tag ${tag}`}
                   onClick={() => handleRemoveTag(tag)}
+                  onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') handleRemoveTag(tag); }}
                 />
               </Badge>
             ))}

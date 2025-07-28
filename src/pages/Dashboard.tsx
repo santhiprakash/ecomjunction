@@ -2,6 +2,7 @@
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ThemeCustomizer from "@/components/theme/ThemeCustomizer";
+import DemoBanner from "@/components/auth/DemoBanner";
 import { useProducts } from "@/contexts/ProductContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -71,6 +72,8 @@ export default function Dashboard() {
       <Header />
       
       <main className="flex-1 container py-6">
+        <DemoBanner />
+        
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
           <div>
             <h1 className="text-3xl font-bold">Dashboard</h1>
