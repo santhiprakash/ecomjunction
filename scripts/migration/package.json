@@ -1,0 +1,24 @@
+{
+  "name": "ecomjunction-migration-scripts",
+  "version": "1.0.0",
+  "description": "Migration scripts for eComJunction localStorage to Neon DB",
+  "private": true,
+  "scripts": {
+    "transform": "ts-node 03_transform_data.ts",
+    "import": "ts-node 04_import_to_neon.ts",
+    "migrate": "npm run transform && npm run import"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.1",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^22.5.5",
+    "@types/uuid": "^9.0.8",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3"
+  }
+}
