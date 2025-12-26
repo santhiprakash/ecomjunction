@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import AuthModal from "@/components/auth/AuthModal";
-import { 
+import SocialMediaManager from "@/components/profile/SocialMediaManager";
+import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
@@ -14,26 +15,27 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle
 } from "@/components/ui/navigation-menu";
-import { 
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
-import { 
+import {
   Sheet,
   SheetContent,
   SheetTrigger,
   SheetClose
 } from "@/components/ui/sheet";
-import { Sun, Moon, User, Settings, BarChart, ShoppingBag, Menu, Crown, Sparkles } from "lucide-react";
+import { Sun, Moon, User, Settings, BarChart, ShoppingBag, Menu, Crown, Sparkles, Share2 } from "lucide-react";
 
 export default function Header() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<'login' | 'register'>('login');
+  const [showSocialMediaManager, setShowSocialMediaManager] = useState(false);
   const { resetTheme } = useTheme();
   const { user, isAuthenticated, logout, isDemo } = useAuth();
 
@@ -185,6 +187,16 @@ export default function Header() {
                     <User className="mr-2 h-4 w-4" />
                     <span>Profile</span>
                   </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      setShowSocialMediaManager(true);
+                    }}
+                  >
+                    <Share2 className="mr-2 h-4 w-4" />
+                    <span>Manage Social Media</span>
+                  </DropdownMenuItem>
                   <DropdownMenuItem className="cursor-pointer" asChild>
                     <Link to="/my-products">
                       <ShoppingBag className="mr-2 h-4 w-4" />
@@ -326,10 +338,16 @@ export default function Header() {
       </div>
 
       {/* Auth Modal */}
-      <AuthModal 
-        open={showAuthModal} 
+      <AuthModal
+        open={showAuthModal}
         onOpenChange={setShowAuthModal}
         defaultTab={authModalTab}
+      />
+
+      {/* Social Media Manager Modal (controlled externally) */}
+      <SocialMediaManager
+        externalOpen={showSocialMediaManager}
+        onExternalOpenChange={setShowSocialMediaManager}
       />
     </header>
   );

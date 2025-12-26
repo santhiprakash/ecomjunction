@@ -78,9 +78,18 @@ const SOCIAL_PLATFORMS = [
   }
 ];
 
-export default function SocialMediaManager() {
+interface SocialMediaManagerProps {
+  externalOpen?: boolean;
+  onExternalOpenChange?: (open: boolean) => void;
+}
+
+export default function SocialMediaManager({ externalOpen, onExternalOpenChange }: SocialMediaManagerProps = {}) {
   const { user, updateProfile } = useAuth();
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+
+  // Use external control if provided, otherwise use internal state
+  const open = externalOpen !== undefined ? externalOpen : internalOpen;
+  const setOpen = onExternalOpenChange || setInternalOpen;
   const [editingPlatform, setEditingPlatform] = useState<string | null>(null);
   const [socialHandles, setSocialHandles] = useState<Record<string, SocialMediaHandle>>(
     user?.socialLinks || {}

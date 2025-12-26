@@ -113,9 +113,6 @@ export default function Index() {
               
               <div className="flex flex-wrap items-center justify-center md:justify-end gap-2 md:gap-3">
                 <div className="hero-button-wrapper">
-                  <SocialMediaManager />
-                </div>
-                <div className="hero-button-wrapper">
                   <ThemeCustomizer />
                 </div>
                 <Button
@@ -125,13 +122,21 @@ export default function Index() {
                   <Share2 className="mr-2 h-4 w-4" />
                   Share Profile
                 </Button>
-                <div className="hero-button-wrapper">
-                  <AddProductForm />
-                </div>
               </div>
             </div>
           </div>
         </section>
+
+        {/* Quick Actions Section - Only for authenticated users */}
+        {user && (
+          <section className="bg-gradient-to-r from-blue-50 to-purple-50 border-b">
+            <div className="container max-w-6xl mx-auto px-4 py-4">
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <AddProductForm />
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Categories Section */}
         <section className="bg-white border-b">
