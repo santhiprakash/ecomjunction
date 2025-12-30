@@ -41,8 +41,12 @@ npm install
 # Copy environment file
 cp .env.example .env.local
 
-# Add your OpenAI API key (optional, for AI features)
-# Edit .env.local and add: VITE_OPENAI_API_KEY=your_key_here
+# Configure environment variables
+# Edit .env.local and add:
+# - DATABASE_URL (from Neon DB)
+# - DATABASE_POOLED_URL (from Neon DB)
+# - VITE_JWT_SECRET (generate with: openssl rand -base64 32)
+# - VITE_OPENAI_API_KEY (optional, for AI features)
 ```
 
 ### Step 2: Run the App (5 min)
@@ -81,7 +85,8 @@ Key directories to understand:
 - ✅ Help merge to main
 
 ### Day 4-5: Start Week 1 Tasks
-- ✅ Set up Supabase production project
+- ✅ Set up Neon DB production project
+- ✅ Implement JWT authentication system
 - ✅ Begin data migration planning
 - ✅ Review database schema
 - ✅ Start writing tests
@@ -97,15 +102,16 @@ Key directories to understand:
 - **Time to Launch:** 8-10 weeks
 
 ### Critical Path
-1. Week 1: Data migration to Supabase
-2. Week 2: Complete authentication flows
-3. Week 3: Payment integration
-4. Week 4: Testing & legal compliance
+1. Week 1: Neon DB setup & JWT authentication
+2. Week 2: Data migration & email verification
+3. Week 3: Password reset & production environment
+4. Week 4: Payment integration
+5. Week 5: Testing & legal compliance
 
 ### Your Role
 Check the [PRIORITY_DEVELOPMENT_PLAN.md](./PRIORITY_DEVELOPMENT_PLAN.md) for your specific tasks based on your role:
 - **Frontend Dev:** UI components, performance optimization
-- **Backend Dev:** Supabase integration, API development
+- **Backend Dev:** Neon DB integration, JWT authentication, API development
 - **Full-stack Dev:** End-to-end features
 - **QA Engineer:** Testing strategy and execution
 - **DevOps:** Infrastructure and deployment
@@ -203,7 +209,8 @@ npm run test:coverage
 - [React Docs](https://react.dev/)
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
 - [Tailwind CSS](https://tailwindcss.com/docs)
-- [Supabase Docs](https://supabase.com/docs)
+- [Neon DB Docs](https://neon.tech/docs)
+- [JWT.io](https://jwt.io/introduction)
 - [Vite Guide](https://vitejs.dev/guide/)
 
 ---

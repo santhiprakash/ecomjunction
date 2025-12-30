@@ -41,28 +41,30 @@ eComJunction is a SAAS platform for influencers and affiliate marketers currentl
 - ⚠️ Missing: Image optimization and CDN
 - ⚠️ Bug: Date deserialization issue (FIXED in branch)
 
-#### 3. Authentication System (60% Complete)
-- ✅ Supabase authentication setup
-- ✅ Email/password registration and login
+#### 3. Authentication System (40% Complete)
 - ✅ Demo mode for testing
-- ✅ Session management with encryption
+- ✅ Session management with encryption (localStorage-based)
 - ✅ Protected routes
 - ✅ User roles (Free, Pro, Enterprise)
+- ⚠️ Missing: Custom JWT authentication system
+- ⚠️ Missing: User registration with password hashing
+- ⚠️ Missing: Login with JWT tokens
 - ⚠️ Missing: Email verification flow
 - ⚠️ Missing: Password reset functionality
 - ⚠️ Missing: Social login (Google, Facebook)
 - ⚠️ Missing: Two-factor authentication
 
-#### 4. Database & Backend (50% Complete)
-- ✅ Supabase project setup
-- ✅ Database schema design
-- ✅ Row Level Security (RLS) policies
+#### 4. Database & Backend (30% Complete)
+- ✅ Database schema design (PostgreSQL)
 - ✅ User profiles table
 - ✅ Products table structure
 - ✅ Analytics table structure
 - ✅ Affiliate IDs table
-- ⚠️ Missing: Migration from localStorage to Supabase
-- ⚠️ Missing: Real-time subscriptions
+- ✅ Authentication tables (passwords, sessions, resets)
+- ⚠️ Missing: Neon DB production setup
+- ⚠️ Missing: Migration from localStorage to Neon DB
+- ⚠️ Missing: API layer for database operations
+- ⚠️ Missing: Connection pooling configuration
 - ⚠️ Missing: Database indexes optimization
 - ⚠️ Missing: Backup and recovery procedures
 
@@ -107,15 +109,19 @@ eComJunction is a SAAS platform for influencers and affiliate marketers currentl
 
 ### Priority 1: Must Have Before Launch
 
-1. **Supabase Integration Migration** (Estimated: 2-3 weeks)
-   - Migrate product data from localStorage to Supabase
-   - Implement real-time data synchronization
+1. **Neon DB Integration & Custom Authentication** (Estimated: 3-4 weeks)
+   - Set up Neon DB production instance
+   - Implement custom JWT-based authentication system
+   - Create API layer for database operations
+   - Migrate product data from localStorage to Neon DB
+   - Implement connection pooling with PgBouncer
    - Add proper error handling and retry logic
    - Test data persistence and recovery
 
 2. **Email Verification System** (Estimated: 1 week)
+   - Set up email service (SendGrid/EmailIT)
    - Implement email verification flow
-   - Configure email templates in Supabase
+   - Create email templates
    - Add verification status checks
    - Handle unverified user restrictions
 
@@ -126,7 +132,8 @@ eComJunction is a SAAS platform for influencers and affiliate marketers currentl
    - Test complete reset flow
 
 4. **Production Environment Setup** (Estimated: 1 week)
-   - Configure production Supabase instance
+   - Configure production Neon DB instance
+   - Set up database branching for staging
    - Set up production environment variables
    - Configure CDN (Cloudflare)
    - Set up SSL certificates
@@ -221,28 +228,30 @@ eComJunction is a SAAS platform for influencers and affiliate marketers currentl
 
 ## Development Roadmap
 
-### Phase 1: Critical Infrastructure (Weeks 1-4)
+### Phase 1: Critical Infrastructure (Weeks 1-5)
 **Goal:** Complete all Priority 1 blockers
 
-- Week 1: Supabase migration + Email verification
-- Week 2: Password reset + Production environment
-- Week 3: Payment integration
-- Week 4: Security audit + Legal docs + Testing
+- Week 1: Neon DB setup + Custom JWT authentication
+- Week 2: Data migration + Email verification
+- Week 3: Password reset + Production environment
+- Week 4: Payment integration
+- Week 5: Security audit + Legal docs + Testing
 
 **Deliverables:**
-- Fully functional Supabase backend
+- Fully functional Neon DB backend
+- Custom JWT authentication system
 - Complete authentication flows
 - Payment system operational
 - Security hardened
 - Legal compliance achieved
 - 80% test coverage
 
-### Phase 2: Essential Features (Weeks 5-7)
+### Phase 2: Essential Features (Weeks 6-8)
 **Goal:** Complete Priority 2 features
 
-- Week 5: Analytics dashboard + Image management
-- Week 6: Performance optimization + Email service
-- Week 7: Monitoring & logging setup
+- Week 6: Analytics dashboard + Image management
+- Week 7: Performance optimization + Email service
+- Week 8: Monitoring & logging setup
 
 **Deliverables:**
 - Analytics tracking operational
@@ -251,7 +260,7 @@ eComJunction is a SAAS platform for influencers and affiliate marketers currentl
 - Email system functional
 - Monitoring in place
 
-### Phase 3: Polish & Launch Prep (Week 8)
+### Phase 3: Polish & Launch Prep (Week 9)
 **Goal:** Final testing and launch preparation
 
 - Comprehensive testing (all types)
@@ -266,7 +275,7 @@ eComJunction is a SAAS platform for influencers and affiliate marketers currentl
 - Beta testing completed
 - Launch plan finalized
 
-### Phase 4: Launch & Post-Launch (Week 9+)
+### Phase 4: Launch & Post-Launch (Week 10+)
 **Goal:** Public launch and iteration
 
 - Public launch
@@ -287,13 +296,13 @@ eComJunction is a SAAS platform for influencers and affiliate marketers currentl
 - 1 Security consultant (1 week)
 
 ### Infrastructure Costs (Monthly)
-- Supabase Pro: $25/month
+- Neon DB Pro: $19/month (0.25 vCPU, scales automatically)
 - Vercel Pro: $20/month
 - Cloudinary: $89/month (or similar CDN)
 - SendGrid/EmailIT: $15-50/month
 - Sentry: $26/month
 - Domain + SSL: $15/month
-- **Total: ~$190-240/month**
+- **Total: ~$184-234/month**
 
 ### Third-party Services
 - OpenAI API: Pay-as-you-go (~$50-100/month estimated)
@@ -306,13 +315,16 @@ eComJunction is a SAAS platform for influencers and affiliate marketers currentl
 ## Risk Assessment
 
 ### High Risk
-1. **Data Migration Issues**: Moving from localStorage to Supabase could cause data loss
+1. **Data Migration Issues**: Moving from localStorage to Neon DB could cause data loss
    - Mitigation: Implement export/import, thorough testing, gradual rollout
 
-2. **Payment Integration Bugs**: Payment failures could impact revenue
+2. **Custom Authentication Complexity**: Building JWT auth from scratch has security risks
+   - Mitigation: Follow best practices, security audit, use proven libraries (bcrypt, jsonwebtoken)
+
+3. **Payment Integration Bugs**: Payment failures could impact revenue
    - Mitigation: Extensive testing, sandbox environment, monitoring
 
-3. **Security Vulnerabilities**: Could lead to data breaches
+4. **Security Vulnerabilities**: Could lead to data breaches
    - Mitigation: Security audit, penetration testing, regular updates
 
 ### Medium Risk
@@ -397,17 +409,19 @@ eComJunction is a SAAS platform for influencers and affiliate marketers currentl
 
 ### Immediate Actions (This Week)
 1. Fix the date deserialization bug (already in branch - merge it)
-2. Create production environment in Supabase
-3. Start Supabase migration planning
-4. Begin security audit preparation
-5. Draft legal documents (Privacy Policy, ToS)
+2. Create production environment in Neon DB
+3. Set up JWT authentication system
+4. Start Neon DB migration planning
+5. Begin security audit preparation
+6. Draft legal documents (Privacy Policy, ToS)
 
 ### Short-term (Next 2 Weeks)
-1. Complete Supabase migration
-2. Implement email verification
-3. Add password reset flow
-4. Set up production infrastructure
-5. Increase test coverage to 50%
+1. Complete Neon DB setup and custom authentication
+2. Complete data migration
+3. Implement email verification
+4. Add password reset flow
+5. Set up production infrastructure
+6. Increase test coverage to 50%
 
 ### Medium-term (Next 4 Weeks)
 1. Complete payment integration
@@ -437,7 +451,7 @@ eComJunction has a solid foundation with 45% of core functionality complete. The
 5. Complete payment integration thoroughly
 6. Conduct proper testing at all levels
 
-**Estimated Timeline to Production:** 8-10 weeks with dedicated team
+**Estimated Timeline to Production:** 9-11 weeks with dedicated team (additional week for custom authentication)
 
 **Recommended Launch Strategy:** Soft launch to beta users (Week 8) → Public launch (Week 10)
 

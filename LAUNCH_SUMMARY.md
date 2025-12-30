@@ -32,7 +32,7 @@
 
 1. **Data Persistence** 🔥
    - Currently using localStorage (not production-ready)
-   - Need to migrate to Supabase
+   - Need to migrate to Neon DB (PostgreSQL)
    - Estimated: 1 week
 
 2. **Authentication Flows** 🔥
@@ -108,9 +108,9 @@ Final touches before launch
 
 ### Week 1 (Jan 1-7): Foundation
 - Fix date bug ✅ (already done)
-- Set up Supabase production
-- Migrate data from localStorage
-- Update ProductContext
+- Set up Neon DB production
+- Migrate data from localStorage to Neon DB
+- Update ProductContext to use Neon DB
 
 ### Week 2 (Jan 8-14): Authentication
 - Email verification
@@ -162,13 +162,13 @@ Final touches before launch
 - 1 Security consultant × 1 week = 1 consultant-week
 
 ### Infrastructure (Monthly)
-- Supabase Pro: $25
+- Neon DB Pro: $19
 - Vercel Pro: $20
 - Cloudinary: $89
 - Email service: $15-50
 - Monitoring: $26
 - Domain/SSL: $15
-- **Total: ~$190-240/month**
+- **Total: ~$184-234/month**
 
 ### One-time
 - Security audit: $2,000-5,000
@@ -219,10 +219,11 @@ Final touches before launch
 
 ### This Week (Dec 30 - Jan 5)
 1. ✅ Merge date fix branch (DONE)
-2. Create Supabase production project
-3. Start data migration planning
-4. Begin test coverage improvement
-5. Draft Privacy Policy
+2. Create Neon DB production project
+3. Set up JWT authentication system
+4. Start data migration planning
+5. Begin test coverage improvement
+6. Draft Privacy Policy
 
 ### Next Week (Jan 6-12)
 1. Complete data migration
@@ -256,9 +257,10 @@ Final touches before launch
 **Can we launch today?** ❌ No
 
 **Why not?**
-- No production database (using localStorage)
+- No production database (using localStorage, need Neon DB)
+- No custom authentication system (need JWT-based auth)
 - No payment system
-- Incomplete authentication
+- Incomplete authentication flows
 - Insufficient testing
 - No legal documents
 - No production infrastructure
@@ -272,7 +274,7 @@ Final touches before launch
 4. Launch (Weeks 9-10)
 
 **What's the biggest risk?** 
-Data migration from localStorage to Supabase
+Data migration from localStorage to Neon DB and implementing custom authentication
 
 **What's the biggest opportunity?**
 AI-powered product extraction is unique and valuable
@@ -280,7 +282,7 @@ AI-powered product extraction is unique and valuable
 ---
 
 **Status:** Ready to start Week 1 development  
-**Next Milestone:** Supabase migration complete (Jan 7)  
+**Next Milestone:** Neon DB setup and migration complete (Jan 7)  
 **Confidence Level:** High (with dedicated team)
 
 ---

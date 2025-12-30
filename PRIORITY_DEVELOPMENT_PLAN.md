@@ -34,19 +34,20 @@ These items are on the critical path and block production launch. They should be
 
 ---
 
-#### Task 1.2: Supabase Production Setup 🔥 HIGH
+#### Task 1.2: Neon DB Production Setup 🔥 HIGH
 **Effort:** 1 day  
 **Owner:** DevOps/Backend Dev
 
-- [ ] Create production Supabase project
-- [ ] Configure production database
-- [ ] Set up environment variables
-- [ ] Configure Row Level Security policies
+- [ ] Create production Neon DB project
+- [ ] Configure production PostgreSQL database
+- [ ] Set up environment variables (DATABASE_URL, DATABASE_POOLED_URL)
+- [ ] Configure connection pooling with PgBouncer
 - [ ] Test database connectivity
 - [ ] Set up automated backups
+- [ ] Configure database branching for staging
 - [ ] Document connection details
 
-**Deliverable:** Production Supabase instance ready
+**Deliverable:** Production Neon DB instance ready
 
 ---
 
@@ -54,31 +55,32 @@ These items are on the critical path and block production launch. They should be
 **Effort:** 3 days  
 **Owner:** Full-stack Dev
 
-- [ ] Create migration utility to move localStorage → Supabase
+- [ ] Create migration utility to move localStorage → Neon DB
 - [ ] Implement data validation during migration
 - [ ] Add rollback mechanism
 - [ ] Create migration progress indicator
 - [ ] Test with sample data
 - [ ] Test with large datasets (1000+ products)
+- [ ] Handle Date serialization properly
 - [ ] Document migration process
 
 **Deliverable:** Working migration tool with tests
 
 ---
 
-#### Task 1.4: Update ProductContext for Supabase 🔥 HIGH
+#### Task 1.4: Update ProductContext for Neon DB 🔥 HIGH
 **Effort:** 2 days  
 **Owner:** Frontend Dev
 
-- [ ] Replace localStorage calls with Supabase queries
-- [ ] Implement real-time subscriptions
+- [ ] Replace localStorage calls with Neon DB queries
+- [ ] Implement API layer for database operations
 - [ ] Add optimistic updates
 - [ ] Handle offline scenarios
 - [ ] Add error handling and retry logic
 - [ ] Update tests for new implementation
-- [ ] Performance testing
+- [ ] Performance testing with connection pooling
 
-**Deliverable:** ProductContext using Supabase
+**Deliverable:** ProductContext using Neon DB
 
 ---
 
@@ -87,11 +89,29 @@ These items are on the critical path and block production launch. They should be
 ### Priority: CRITICAL
 **Goal:** Complete authentication flows and security hardening
 
-#### Task 2.1: Email Verification Flow 🔥 HIGH
+#### Task 2.1: Custom Authentication System 🔥 HIGH
+**Effort:** 3 days  
+**Owner:** Backend Dev
+
+- [ ] Implement JWT-based authentication
+- [ ] Create user registration with bcrypt password hashing
+- [ ] Implement login with JWT token generation
+- [ ] Add token verification middleware
+- [ ] Create session management system
+- [ ] Implement token refresh mechanism
+- [ ] Add logout functionality
+- [ ] Test authentication flows
+
+**Deliverable:** Working JWT authentication system
+
+---
+
+#### Task 2.2: Email Verification Flow 🔥 HIGH
 **Effort:** 2 days  
 **Owner:** Backend Dev
 
-- [ ] Configure Supabase email templates
+- [ ] Set up email service (SendGrid/EmailIT)
+- [ ] Create email verification token system
 - [ ] Implement verification email sending
 - [ ] Create verification landing page
 - [ ] Add verification status checks
@@ -103,7 +123,7 @@ These items are on the critical path and block production launch. They should be
 
 ---
 
-#### Task 2.2: Password Reset Implementation 🔥 HIGH
+#### Task 2.3: Password Reset Implementation 🔥 HIGH
 **Effort:** 2 days  
 **Owner:** Full-stack Dev
 
@@ -119,7 +139,7 @@ These items are on the critical path and block production launch. They should be
 
 ---
 
-#### Task 2.3: Security Hardening 🔥 HIGH
+#### Task 2.4: Security Hardening 🔥 HIGH
 **Effort:** 2 days  
 **Owner:** Security Lead/Senior Dev
 
