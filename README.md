@@ -22,6 +22,8 @@ A powerful SAAS platform for influencers and affiliate marketers to showcase and
 - **UI Components**: shadcn/ui, Radix UI, Tailwind CSS
 - **State Management**: React Context, TanStack Query
 - **Routing**: React Router v6
+- **Database**: Neon DB (Serverless PostgreSQL)
+- **Authentication**: Custom JWT-based authentication
 - **AI Integration**: OpenAI GPT-4o-mini
 - **Icons**: Lucide React
 - **Charts**: Recharts
@@ -29,6 +31,7 @@ A powerful SAAS platform for influencers and affiliate marketers to showcase and
 ## 📋 Prerequisites
 
 - Node.js 18+ and npm
+- Neon DB account and database (for production)
 - OpenAI API key (for Quick Add functionality)
 
 ## 🚀 Quick Start
@@ -54,11 +57,21 @@ Create a `.env.local` file based on `.env.example`:
 cp .env.example .env.local
 ```
 
-Add your OpenAI API key to enable Quick Add functionality:
+Add your configuration:
 
 ```env
+# Neon Database
+DATABASE_URL=postgresql://[user]:[password]@[host]/[database]?sslmode=require
+DATABASE_POOLED_URL=postgresql://[user]:[password]@[host]/[database]?sslmode=require&pgbouncer=true
+
+# JWT Secret (generate with: openssl rand -base64 32)
+VITE_JWT_SECRET=your-secret-key-here
+
+# OpenAI API Key
 VITE_OPENAI_API_KEY=your_openai_api_key_here
 ```
+
+See [Neon DB Setup Guide](./docs/neon-setup.md) for detailed database configuration.
 
 ### 4. Start Development Server
 
