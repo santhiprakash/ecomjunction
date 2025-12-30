@@ -164,11 +164,12 @@ Final touches before launch
 ### Infrastructure (Monthly)
 - Neon DB Pro: $19
 - Vercel Pro: $20
-- Cloudinary: $89
+- Cloudflare R2: $1.50
 - Email service: $15-50
 - Monitoring: $26
 - Domain/SSL: $15
-- **Total: ~$184-234/month**
+- Razorpay/PayPal: Transaction fees (2-2.9%)
+- **Total: ~$96.50-146.50/month + transaction fees**
 
 ### One-time
 - Security audit: $2,000-5,000

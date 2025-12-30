@@ -160,20 +160,23 @@ These items are on the critical path and block production launch. They should be
 ### Priority: CRITICAL
 **Goal:** Enable monetization
 
-#### Task 3.1: Razorpay Integration 🔥 HIGH
-**Effort:** 3 days  
+#### Task 3.1: Payment Integration (Razorpay + PayPal) 🔥 HIGH
+**Effort:** 4 days  
 **Owner:** Backend Dev
 
-- [ ] Set up Razorpay account
+- [ ] Set up Razorpay account (India)
+- [ ] Set up PayPal business account (International)
 - [ ] Integrate Razorpay SDK
-- [ ] Create payment checkout flow
-- [ ] Implement webhook handlers
+- [ ] Integrate PayPal SDK
+- [ ] Implement region detection
+- [ ] Create unified payment API
+- [ ] Implement webhook handlers for both
 - [ ] Add payment status tracking
-- [ ] Test payment flows (success, failure)
-- [ ] Test refund flow
+- [ ] Test payment flows (India & International)
+- [ ] Test refund flows
 - [ ] Add payment logging
 
-**Deliverable:** Working payment system
+**Deliverable:** Working dual-gateway payment system
 
 ---
 

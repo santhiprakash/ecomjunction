@@ -565,56 +565,31 @@ export function PricingPage() {
 
 ---
 
-## Stripe Integration
+## Payment Integration (Razorpay + PayPal)
+
+See detailed implementation in [PAYMENT_INTEGRATION.md](./PAYMENT_INTEGRATION.md)
+
+**Summary:**
+- **India:** Razorpay (2% transaction fee, supports UPI/Cards/Net Banking)
+- **International:** PayPal (2.9% + $0.30 transaction fee)
+- Automatic region detection
+- Unified payment API
+- Webhook handling for both gateways
 
 ```typescript
-// lib/stripe.ts
-import Stripe from 'stripe';
+// lib/payments/index.ts
+import { razorpayService } from './razorpay';
+import { paypalService } from './paypal';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16',
-});
-
-export const STRIPE_PRICES = {
-  pro: 'price_xxx', // Replace with actual Stripe price ID
-  enterprise: 'price_yyy',
-};
-
-export async function createCheckoutSession(
+export async function createPaymentOrder(
   userId: string,
-  plan: 'pro' | 'enterprise'
+  plan: 'pro' | 'enterprise',
+  region: 'india' | 'international'
 ) {
-  const session = await stripe.checkout.sessions.create({
-    customer_email: user.email,
-    line_items: [
-      {
-        price: STRIPE_PRICES[plan],
-        quantity: 1,
-      },
-    ],
-    mode: 'subscription',
-    success_url: `${process.env.APP_URL}/dashboard?success=true`,
-    cancel_url: `${process.env.APP_URL}/pricing?canceled=true`,
-    metadata: {
-      user_id: userId,
-      plan,
-    },
-  });
-
-  return session.url;
-}
-
-export async function handleWebhook(event: Stripe.Event) {
-  switch (event.type) {
-    case 'checkout.session.completed':
-      await handleCheckoutCompleted(event.data.object);
-      break;
-    case 'customer.subscription.updated':
-      await handleSubscriptionUpdated(event.data.object);
-      break;
-    case 'customer.subscription.deleted':
-      await handleSubscriptionDeleted(event.data.object);
-      break;
+  if (region === 'india') {
+    return await razorpayService.createOrder(amount, 'INR', userId);
+  } else {
+    return await paypalService.createOrder(amount, 'USD', userId);
   }
 }
 ```

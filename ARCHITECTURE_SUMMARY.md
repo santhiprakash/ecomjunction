@@ -28,7 +28,7 @@ eComJunction is a modern SAAS platform for influencers and affiliate marketers, 
 - **Deployment:** Platform-agnostic (Railway, Vercel, VPS)
 - **CDN:** Cloudflare
 - **Monitoring:** Sentry
-- **Payments:** Stripe
+- **Payments:** Razorpay (India) + PayPal (International)
 
 ---
 
@@ -294,8 +294,11 @@ User → Select File → Validate → Optimize (Sharp)
 - `GET /api/analytics/dashboard` - Get analytics
 
 ### Payments
-- `POST /api/payments/checkout` - Create checkout session
-- `POST /api/payments/webhook` - Stripe webhook
+- `POST /api/payments/create-order` - Create payment order
+- `POST /api/payments/verify-razorpay` - Verify Razorpay payment
+- `POST /api/payments/verify-paypal` - Verify PayPal payment
+- `POST /api/webhooks/razorpay` - Razorpay webhook
+- `POST /api/webhooks/paypal` - PayPal webhook
 - `GET /api/payments/subscription` - Get subscription
 
 ---
@@ -363,7 +366,8 @@ User → Select File → Validate → Optimize (Sharp)
 | Auth0 | Free/Essentials | $0-35 |
 | Cloudflare R2 | Pay-as-you-go | $1.50 |
 | OpenAI | Usage-based | $20-50 |
-| Stripe | Transaction fees | 2.9% + $0.30 |
+| Razorpay | Transaction fees | 2% (India) |
+| PayPal | Transaction fees | 2.9% + $0.30 (Intl) |
 | Vercel/Railway | Pro | $20 |
 | Monitoring (Sentry) | Team | $26 |
 | Domain + SSL | Annual | $15 |

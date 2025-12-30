@@ -374,9 +374,15 @@ R2_PUBLIC_URL=https://cdn.ecomjunction.com
 # OpenAI
 VITE_OPENAI_API_KEY=your_openai_key
 
-# Stripe
-STRIPE_SECRET_KEY=your_stripe_secret
-STRIPE_WEBHOOK_SECRET=your_webhook_secret
+# Razorpay (India)
+RAZORPAY_KEY_ID=rzp_live_xxxxx
+RAZORPAY_KEY_SECRET=your_secret_key
+RAZORPAY_WEBHOOK_SECRET=your_webhook_secret
+
+# PayPal (International)
+PAYPAL_CLIENT_ID=your_client_id
+PAYPAL_CLIENT_SECRET=your_client_secret
+PAYPAL_MODE=live
 
 # Application
 VITE_APP_URL=https://ecomjunction.com

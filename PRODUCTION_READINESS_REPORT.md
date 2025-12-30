@@ -140,9 +140,10 @@ eComJunction is a SAAS platform for influencers and affiliate marketers currentl
    - Configure custom domain
 
 5. **Payment Integration** (Estimated: 2 weeks)
-   - Integrate Razorpay payment gateway
+   - Integrate Razorpay (India) and PayPal (International)
+   - Implement region detection
    - Implement subscription management
-   - Add webhook handlers for payment events
+   - Add webhook handlers for both gateways
    - Test payment flows (success, failure, refund)
    - Implement invoice generation
 
@@ -298,11 +299,12 @@ eComJunction is a SAAS platform for influencers and affiliate marketers currentl
 ### Infrastructure Costs (Monthly)
 - Neon DB Pro: $19/month (0.25 vCPU, scales automatically)
 - Vercel Pro: $20/month
-- Cloudinary: $89/month (or similar CDN)
+- Cloudflare R2: $1.50/month (100GB storage, zero egress)
 - SendGrid/EmailIT: $15-50/month
 - Sentry: $26/month
 - Domain + SSL: $15/month
-- **Total: ~$184-234/month**
+- Razorpay/PayPal: Transaction fees (2-2.9% per transaction)
+- **Total: ~$96.50-146.50/month + transaction fees**
 
 ### Third-party Services
 - OpenAI API: Pay-as-you-go (~$50-100/month estimated)
