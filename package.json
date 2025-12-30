@@ -15,6 +15,7 @@
     "db:migrate": "node scripts/migrate-db.js",
     "db:migrate-safe": "node scripts/migrate-missing-tables.js",
     "db:test": "node scripts/test-db.js",
+    "db:seed": "node scripts/seed-demo-data.js",
     "test:r2": "node scripts/test-r2.js"
   },
   "dependencies": {

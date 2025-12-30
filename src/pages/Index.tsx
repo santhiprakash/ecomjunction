@@ -6,7 +6,6 @@ import ProductList from "@/components/products/ProductList";
 import ProductFilters from "@/components/products/ProductFilters";
 import AddProductForm from "@/components/products/AddProductForm";
 import ThemeCustomizer from "@/components/theme/ThemeCustomizer";
-import SocialMediaManager from "@/components/profile/SocialMediaManager";
 import { SocialMediaQuickLinks } from "@/components/profile/SocialMediaDisplay";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

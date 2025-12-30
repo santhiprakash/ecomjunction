@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import AuthModal from "@/components/auth/AuthModal";
-import SocialMediaManager from "@/components/profile/SocialMediaManager";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -35,7 +34,6 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<'login' | 'register'>('login');
-  const [showSocialMediaManager, setShowSocialMediaManager] = useState(false);
   const { resetTheme } = useTheme();
   const { user, isAuthenticated, logout, isDemo } = useAuth();
 
@@ -183,19 +181,11 @@ export default function Header() {
                     </div>
                   </div>
 
-                  <DropdownMenuItem className="cursor-pointer">
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="cursor-pointer"
-                    onSelect={(e) => {
-                      e.preventDefault();
-                      setShowSocialMediaManager(true);
-                    }}
-                  >
-                    <Share2 className="mr-2 h-4 w-4" />
-                    <span>Manage Social Media</span>
+                  <DropdownMenuItem className="cursor-pointer" asChild>
+                    <Link to="/profile">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem className="cursor-pointer" asChild>
                     <Link to="/my-products">
@@ -344,11 +334,6 @@ export default function Header() {
         defaultTab={authModalTab}
       />
 
-      {/* Social Media Manager Modal (controlled externally) */}
-      <SocialMediaManager
-        externalOpen={showSocialMediaManager}
-        onExternalOpenChange={setShowSocialMediaManager}
-      />
     </header>
   );
 }

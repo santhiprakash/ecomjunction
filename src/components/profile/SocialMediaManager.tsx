@@ -165,12 +165,15 @@ export default function SocialMediaManager({ externalOpen, onExternalOpenChange 
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="gap-2">
-          <Plus className="h-4 w-4" />
-          Manage Social Media
-        </Button>
-      </DialogTrigger>
+      {/* Only show trigger button if not controlled externally (externalOpen is undefined) */}
+      {externalOpen === undefined && (
+        <DialogTrigger asChild>
+          <Button variant="outline" className="gap-2">
+            <Plus className="h-4 w-4" />
+            Manage Social Media
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Social Media Handles</DialogTitle>

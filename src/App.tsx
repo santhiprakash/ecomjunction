@@ -24,6 +24,7 @@ import Features from "./pages/Features";
 import About from "./pages/About";
 import Help from "./pages/Help";
 import PrivacySettings from "./pages/PrivacySettings";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +61,11 @@ const App = () => (
                 <Route path="/privacy-policy" element={<Privacy />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/privacy-settings" element={<PrivacySettings />} />
+                <Route path="/profile" element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                } />
                 <Route path="/terms-of-service" element={<Terms />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/cookies" element={<Cookies />} />

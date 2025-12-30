@@ -2,7 +2,6 @@
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ThemeCustomizer from "@/components/theme/ThemeCustomizer";
-import SocialMediaManager from "@/components/profile/SocialMediaManager";
 import DemoBanner from "@/components/auth/DemoBanner";
 import { useProducts } from "@/contexts/ProductContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -84,7 +83,6 @@ export default function Dashboard() {
           </div>
 
           <div className="flex items-center gap-4">
-            <SocialMediaManager />
             <ThemeCustomizer />
           </div>
         </div>
