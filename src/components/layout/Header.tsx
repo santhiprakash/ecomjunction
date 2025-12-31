@@ -91,37 +91,40 @@ export default function Header() {
               </>
             )}
             
-            <NavigationMenuItem>
-              <NavigationMenuTrigger>Categories</NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <div className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-2">
-                  <Link to="/?category=Electronics" className="block select-none rounded-md p-3 hover:bg-accent hover:text-accent-foreground">
-                    <div className="text-sm font-medium">Electronics</div>
-                    <div className="line-clamp-2 text-sm text-muted-foreground">
-                      Gadgets, devices, and tech accessories
-                    </div>
-                  </Link>
-                  <Link to="/?category=Fashion" className="block select-none rounded-md p-3 hover:bg-accent hover:text-accent-foreground">
-                    <div className="text-sm font-medium">Fashion</div>
-                    <div className="line-clamp-2 text-sm text-muted-foreground">
-                      Clothing, shoes, and accessories
-                    </div>
-                  </Link>
-                  <Link to="/?category=Home" className="block select-none rounded-md p-3 hover:bg-accent hover:text-accent-foreground">
-                    <div className="text-sm font-medium">Home & Kitchen</div>
-                    <div className="line-clamp-2 text-sm text-muted-foreground">
-                      Furniture, appliances, and decor
-                    </div>
-                  </Link>
-                  <Link to="/?category=Beauty" className="block select-none rounded-md p-3 hover:bg-accent hover:text-accent-foreground">
-                    <div className="text-sm font-medium">Beauty</div>
-                    <div className="line-clamp-2 text-sm text-muted-foreground">
-                      Skincare, makeup, and personal care
-                    </div>
-                  </Link>
-                </div>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
+            {/* Only show Categories menu for non-authenticated users */}
+            {!isAuthenticated && (
+              <NavigationMenuItem>
+                <NavigationMenuTrigger>Categories</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <div className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-2">
+                    <Link to="/?category=Electronics" className="block select-none rounded-md p-3 hover:bg-accent hover:text-accent-foreground">
+                      <div className="text-sm font-medium">Electronics</div>
+                      <div className="line-clamp-2 text-sm text-muted-foreground">
+                        Gadgets, devices, and tech accessories
+                      </div>
+                    </Link>
+                    <Link to="/?category=Fashion" className="block select-none rounded-md p-3 hover:bg-accent hover:text-accent-foreground">
+                      <div className="text-sm font-medium">Fashion</div>
+                      <div className="line-clamp-2 text-sm text-muted-foreground">
+                        Clothing, shoes, and accessories
+                      </div>
+                    </Link>
+                    <Link to="/?category=Home" className="block select-none rounded-md p-3 hover:bg-accent hover:text-accent-foreground">
+                      <div className="text-sm font-medium">Home & Kitchen</div>
+                      <div className="line-clamp-2 text-sm text-muted-foreground">
+                        Furniture, appliances, and decor
+                      </div>
+                    </Link>
+                    <Link to="/?category=Beauty" className="block select-none rounded-md p-3 hover:bg-accent hover:text-accent-foreground">
+                      <div className="text-sm font-medium">Beauty</div>
+                      <div className="line-clamp-2 text-sm text-muted-foreground">
+                        Skincare, makeup, and personal care
+                      </div>
+                    </Link>
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            )}
             
             <NavigationMenuItem>
               <Link to="/help-center" className={navigationMenuTriggerStyle()}>

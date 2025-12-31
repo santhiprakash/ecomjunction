@@ -30,6 +30,7 @@ import Help from "./pages/Help";
 import PrivacySettings from "./pages/PrivacySettings";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
+import Analytics from "./pages/Analytics";
 
 const queryClient = new QueryClient();
 
@@ -70,10 +71,7 @@ const App = () => (
                 } />
                 <Route path="/analytics" element={
                   <ProtectedRoute>
-                    <div className="container mx-auto px-4 py-8">
-                      <h1 className="text-2xl font-bold mb-6">Analytics</h1>
-                      <p className="text-muted-foreground">Analytics dashboard coming soon...</p>
-                    </div>
+                    <Analytics />
                   </ProtectedRoute>
                 } />
                 <Route path="/documentation" element={<Documentation />} />
