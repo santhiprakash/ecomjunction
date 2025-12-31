@@ -2,6 +2,7 @@ import { useState } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import SocialMediaManager from "@/components/profile/SocialMediaManager";
+import SMTPConfigManager from "@/components/profile/SMTPConfigManager";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -73,7 +74,7 @@ function ProfileContent() {
         </Card>
 
         {/* Social Media Management */}
-        <Card>
+        <Card className="mb-6">
           <CardHeader>
             <CardTitle>Social Media Profiles</CardTitle>
             <CardDescription>
@@ -85,7 +86,8 @@ function ProfileContent() {
           </CardContent>
         </Card>
 
-        {/* Additional Settings can be added here */}
+        {/* SMTP Configuration */}
+        <SMTPConfigManager />
       </main>
       
       <Footer />

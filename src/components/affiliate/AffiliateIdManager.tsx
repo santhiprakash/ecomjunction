@@ -31,7 +31,7 @@ import {
   Check,
   AlertCircle
 } from 'lucide-react';
-import { supabaseHelpers } from '@/lib/supabase';
+import { dbHelpers } from '@/lib/neondb';
 
 interface AffiliateId {
   id: string;
@@ -99,7 +99,7 @@ export default function AffiliateIdManager() {
     
     try {
       setLoading(true);
-      const data = await supabaseHelpers.getUserAffiliateIds(user.id);
+      const data = await dbHelpers.getUserAffiliateIds(user.id);
       setAffiliateIds(data || []);
     } catch (error) {
       console.error('Failed to load affiliate IDs:', error);
@@ -122,13 +122,13 @@ export default function AffiliateIdManager() {
       
       if (editingId) {
         // Update existing affiliate ID
-        await supabaseHelpers.updateAffiliateId(editingId, {
+        await dbHelpers.updateAffiliateId(editingId, {
           affiliate_id: formData.affiliate_id.trim()
         });
         toast.success('Affiliate ID updated successfully');
       } else {
         // Create new affiliate ID
-        await supabaseHelpers.createAffiliateId({
+        await dbHelpers.createAffiliateId({
           user_id: user.id,
           platform: formData.platform,
           affiliate_id: formData.affiliate_id.trim()
@@ -160,7 +160,7 @@ export default function AffiliateIdManager() {
   const handleDelete = async (id: string) => {
     try {
       setLoading(true);
-      await supabaseHelpers.deleteAffiliateId(id);
+      await dbHelpers.deleteAffiliateId(id);
       await loadAffiliateIds();
       toast.success('Affiliate ID removed');
     } catch (error) {

@@ -8,12 +8,10 @@ import { Pool, PoolClient } from 'pg';
 // Environment variables
 const databaseUrl = import.meta.env.DATABASE_URL || import.meta.env.VITE_NEON_DATABASE_URL;
 
-if (!databaseUrl) {
-  throw new Error('Missing NeonDB database URL. Please check your environment variables.');
-}
-
 // Create PostgreSQL connection pool
-export const pool = new Pool({
+// Note: In production, database connections should be made from backend API, not client-side
+// This allows graceful degradation if DATABASE_URL is not configured
+export const pool = databaseUrl ? new Pool({
   connectionString: databaseUrl,
   ssl: {
     rejectUnauthorized: false, // Required for Neon
@@ -21,7 +19,7 @@ export const pool = new Pool({
   max: 20, // Maximum number of clients in the pool
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
-});
+}) : null;
 
 // Database types (matching schema)
 export interface Database {
@@ -221,11 +219,20 @@ export interface Database {
   };
 }
 
+// Helper function to check if pool is available
+const ensurePool = () => {
+  if (!pool) {
+    throw new Error('Database connection not configured. Please set DATABASE_URL environment variable.');
+  }
+  return pool;
+};
+
 // Helper functions for common database operations
 export const dbHelpers = {
   // User operations
   async createUserProfile(userId: string, userData: Partial<Database['public']['Tables']['users']['Insert']>) {
-    const client = await pool.connect();
+    const dbPool = ensurePool();
+    const client = await dbPool.connect();
     try {
       const result = await client.query(
         `INSERT INTO users (id, email, username, first_name, last_name, bio, avatar_url, website_url,
@@ -255,7 +262,8 @@ export const dbHelpers = {
   },
 
   async updateUserProfile(userId: string, userData: Database['public']['Tables']['users']['Update']) {
-    const client = await pool.connect();
+    const dbPool = ensurePool();
+    const client = await dbPool.connect();
     try {
       const updates: string[] = [];
       const values: any[] = [];
@@ -287,7 +295,8 @@ export const dbHelpers = {
   },
 
   async getUserProfile(userId: string) {
-    const client = await pool.connect();
+    const dbPool = ensurePool();
+    const client = await dbPool.connect();
     try {
       const result = await client.query('SELECT * FROM users WHERE id = $1', [userId]);
       return result.rows[0] || null;
@@ -297,7 +306,8 @@ export const dbHelpers = {
   },
 
   async getUserByEmail(email: string) {
-    const client = await pool.connect();
+    const dbPool = ensurePool();
+    const client = await dbPool.connect();
     try {
       const result = await client.query('SELECT * FROM users WHERE email = $1', [email]);
       return result.rows[0] || null;
@@ -308,7 +318,8 @@ export const dbHelpers = {
 
   // Product operations
   async createProduct(productData: Database['public']['Tables']['products']['Insert']) {
-    const client = await pool.connect();
+    const dbPool = ensurePool();
+    const client = await dbPool.connect();
     try {
       const result = await client.query(
         `INSERT INTO products (user_id, title, description, price, currency, affiliate_url,
@@ -337,7 +348,8 @@ export const dbHelpers = {
   },
 
   async getUserProducts(userId: string) {
-    const client = await pool.connect();
+    const dbPool = ensurePool();
+    const client = await dbPool.connect();
     try {
       const result = await client.query(
         'SELECT * FROM products WHERE user_id = $1 AND is_active = true ORDER BY created_at DESC',
@@ -350,7 +362,8 @@ export const dbHelpers = {
   },
 
   async updateProduct(productId: string, productData: Database['public']['Tables']['products']['Update']) {
-    const client = await pool.connect();
+    const dbPool = ensurePool();
+    const client = await dbPool.connect();
     try {
       const updates: string[] = [];
       const values: any[] = [];
@@ -381,7 +394,8 @@ export const dbHelpers = {
   },
 
   async deleteProduct(productId: string) {
-    const client = await pool.connect();
+    const dbPool = ensurePool();
+    const client = await dbPool.connect();
     try {
       const result = await client.query(
         'UPDATE products SET is_active = false WHERE id = $1 RETURNING *',
@@ -395,7 +409,8 @@ export const dbHelpers = {
 
   // Analytics operations
   async trackEvent(eventData: Database['public']['Tables']['analytics']['Insert']) {
-    const client = await pool.connect();
+    const dbPool = ensurePool();
+    const client = await dbPool.connect();
     try {
       const result = await client.query(
         `INSERT INTO analytics (product_id, user_id, event_type, visitor_ip, user_agent, referrer, created_at)
@@ -417,7 +432,8 @@ export const dbHelpers = {
   },
 
   async getProductAnalytics(productId: string) {
-    const client = await pool.connect();
+    const dbPool = ensurePool();
+    const client = await dbPool.connect();
     try {
       const result = await client.query(
         `SELECT
@@ -438,7 +454,8 @@ export const dbHelpers = {
 
   // Affiliate ID operations
   async createAffiliateId(affiliateData: Database['public']['Tables']['affiliate_ids']['Insert']) {
-    const client = await pool.connect();
+    const dbPool = ensurePool();
+    const client = await dbPool.connect();
     try {
       const result = await client.query(
         `INSERT INTO affiliate_ids (user_id, platform, affiliate_id, is_active, created_at, updated_at)
@@ -460,7 +477,8 @@ export const dbHelpers = {
   },
 
   async getUserAffiliateIds(userId: string) {
-    const client = await pool.connect();
+    const dbPool = ensurePool();
+    const client = await dbPool.connect();
     try {
       const result = await client.query(
         'SELECT * FROM affiliate_ids WHERE user_id = $1 AND is_active = true ORDER BY created_at DESC',
@@ -472,8 +490,36 @@ export const dbHelpers = {
     }
   },
 
+  async updateAffiliateId(affiliateIdId: string, affiliateData: Database['public']['Tables']['affiliate_ids']['Update']) {
+    const dbPool = ensurePool();
+    const client = await dbPool.connect();
+    try {
+      const updates: string[] = [];
+      const values: any[] = [];
+      let paramIndex = 1;
+
+      Object.entries(affiliateData).forEach(([key, value]) => {
+        if (key !== 'id' && value !== undefined) {
+          updates.push(`${key} = $${paramIndex}`);
+          values.push(value);
+          paramIndex++;
+        }
+      });
+
+      updates.push(`updated_at = NOW()`);
+      values.push(affiliateIdId);
+
+      const query = `UPDATE affiliate_ids SET ${updates.join(', ')} WHERE id = $${paramIndex} RETURNING *`;
+      const result = await client.query(query, values);
+      return result.rows[0];
+    } finally {
+      client.release();
+    }
+  },
+
   async getAffiliateIdByPlatform(userId: string, platform: string) {
-    const client = await pool.connect();
+    const dbPool = ensurePool();
+    const client = await dbPool.connect();
     try {
       const result = await client.query(
         'SELECT * FROM affiliate_ids WHERE user_id = $1 AND platform = $2 AND is_active = true',
@@ -484,15 +530,122 @@ export const dbHelpers = {
       client.release();
     }
   },
+
+  async deleteAffiliateId(affiliateIdId: string) {
+    const dbPool = ensurePool();
+    const client = await dbPool.connect();
+    try {
+      const result = await client.query(
+        'UPDATE affiliate_ids SET is_active = false WHERE id = $1 RETURNING *',
+        [affiliateIdId]
+      );
+      return result.rows[0] || null;
+    } finally {
+      client.release();
+    }
+  },
+
+  // SMTP Settings operations
+  async getUserSMTPSettings(userId: string) {
+    const dbPool = ensurePool();
+    const client = await dbPool.connect();
+    try {
+      const result = await client.query(
+        'SELECT * FROM user_smtp_settings WHERE user_id = $1 ORDER BY created_at DESC',
+        [userId]
+      );
+      return result.rows;
+    } finally {
+      client.release();
+    }
+  },
+
+  async getActiveSMTPSetting(userId: string) {
+    const dbPool = ensurePool();
+    const client = await dbPool.connect();
+    try {
+      const result = await client.query(
+        'SELECT * FROM user_smtp_settings WHERE user_id = $1 AND is_active = true LIMIT 1',
+        [userId]
+      );
+      return result.rows[0] || null;
+    } finally {
+      client.release();
+    }
+  },
+
+  async createOrUpdateSMTPSetting(
+    userId: string,
+    provider: string,
+    settings: Record<string, any>,
+    fromEmail: string,
+    fromName?: string
+  ) {
+    const dbPool = ensurePool();
+    const client = await dbPool.connect();
+    try {
+      const result = await client.query(
+        `INSERT INTO user_smtp_settings (user_id, provider, settings, from_email, from_name, updated_at)
+         VALUES ($1, $2, $3, $4, $5, NOW())
+         ON CONFLICT (user_id, provider)
+         DO UPDATE SET 
+           settings = EXCLUDED.settings,
+           from_email = EXCLUDED.from_email,
+           from_name = EXCLUDED.from_name,
+           updated_at = NOW()
+         RETURNING *`,
+        [userId, provider, JSON.stringify(settings), fromEmail, fromName || null]
+      );
+      return result.rows[0];
+    } finally {
+      client.release();
+    }
+  },
+
+  async activateSMTPSetting(userId: string, settingId: string) {
+    const dbPool = ensurePool();
+    const client = await dbPool.connect();
+    try {
+      // First, deactivate all settings for this user
+      await client.query(
+        'UPDATE user_smtp_settings SET is_active = false WHERE user_id = $1',
+        [userId]
+      );
+      // Then activate the specified setting
+      const result = await client.query(
+        'UPDATE user_smtp_settings SET is_active = true, updated_at = NOW() WHERE id = $1 AND user_id = $2 RETURNING *',
+        [settingId, userId]
+      );
+      return result.rows[0] || null;
+    } finally {
+      client.release();
+    }
+  },
+
+  async deleteSMTPSetting(userId: string, provider: string) {
+    const dbPool = ensurePool();
+    const client = await dbPool.connect();
+    try {
+      const result = await client.query(
+        'DELETE FROM user_smtp_settings WHERE user_id = $1 AND provider = $2 RETURNING *',
+        [userId, provider]
+      );
+      return result.rows[0] || null;
+    } finally {
+      client.release();
+    }
+  },
 };
 
-// Test connection on module load
-pool.on('connect', () => {
-  console.log('✅ Connected to NeonDB');
-});
+// Test connection on module load (only if pool is available)
+if (pool) {
+  pool.on('connect', () => {
+    console.log('✅ Connected to NeonDB');
+  });
 
-pool.on('error', (err) => {
-  console.error('❌ Unexpected NeonDB error:', err);
-});
+  pool.on('error', (err) => {
+    console.error('❌ Unexpected NeonDB error:', err);
+  });
+}
 
 export default pool;

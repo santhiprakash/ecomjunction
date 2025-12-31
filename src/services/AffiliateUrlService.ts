@@ -1,4 +1,4 @@
-import { supabaseHelpers } from '@/lib/supabase';
+import { dbHelpers } from '@/lib/neondb';
 
 export interface AffiliateUrlResult {
   affiliateUrl: string;
@@ -27,7 +27,7 @@ export class AffiliateUrlService {
 
     try {
       // Get user's affiliate ID for this platform
-      const affiliateIdData = await supabaseHelpers.getAffiliateIdByPlatform(userId, platform);
+      const affiliateIdData = await dbHelpers.getAffiliateIdByPlatform(userId, platform);
       
       if (!affiliateIdData) {
         return {

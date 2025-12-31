@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Search, MessageCircle, Book, Video, Mail } from "lucide-react";
+import { toast } from "sonner";
+import ContactForm from "@/components/help/ContactForm";
 
 export default function Help() {
   const faqs = [
@@ -119,38 +121,61 @@ export default function Help() {
 
       {/* Contact Support */}
       <div className="bg-muted/50 py-20">
-        <div className="container max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Still Need Help?</h2>
-          <p className="text-lg text-muted-foreground mb-8">
-            Our support team is here to help you succeed. Get in touch with us.
-          </p>
+        <div className="container max-w-6xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Still Need Help?</h2>
+            <p className="text-lg text-muted-foreground">
+              Our support team is here to help you succeed. Get in touch with us.
+            </p>
+          </div>
           
-          <div className="grid md:grid-cols-2 gap-8 max-w-2xl mx-auto">
-            <Card>
+          <div className="grid md:grid-cols-3 gap-6">
+            <Card className="hover:shadow-md transition-shadow">
               <CardHeader>
                 <Mail className="h-8 w-8 text-primary mx-auto mb-2" />
-                <CardTitle>Email Support</CardTitle>
+                <CardTitle className="text-center">Email Support</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">Get detailed help via email</p>
-                <Button variant="outline" className="w-full">
+                <p className="text-muted-foreground mb-4 text-center text-sm">
+                  Get detailed help via email
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => window.location.href = 'mailto:support@shopmatic.cc'}
+                >
+                  <Mail className="h-4 w-4 mr-2" />
                   support@shopmatic.cc
                 </Button>
               </CardContent>
             </Card>
             
-            <Card>
+            <Card className="hover:shadow-md transition-shadow">
               <CardHeader>
                 <MessageCircle className="h-8 w-8 text-primary mx-auto mb-2" />
-                <CardTitle>Live Chat</CardTitle>
+                <CardTitle className="text-center">Live Chat</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-4">Chat with us in real-time</p>
-                <Button className="w-full">
+                <p className="text-muted-foreground mb-4 text-center text-sm">
+                  Chat with us in real-time
+                </p>
+                <Button 
+                  className="w-full"
+                  onClick={() => {
+                    // Placeholder for live chat integration
+                    // Can be integrated with Intercom, Crisp, or similar service
+                    toast.info("Live chat coming soon! Please use email or contact form for now.");
+                  }}
+                >
+                  <MessageCircle className="h-4 w-4 mr-2" />
                   Start Live Chat
                 </Button>
               </CardContent>
             </Card>
+
+            <div>
+              <ContactForm />
+            </div>
           </div>
         </div>
       </div>
