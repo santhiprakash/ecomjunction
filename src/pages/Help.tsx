@@ -121,7 +121,7 @@ export default function Help() {
 
       {/* Contact Support */}
       <div className="bg-muted/50 py-20">
-        <div className="container max-w-6xl mx-auto px-4">
+        <div className="container max-w-4xl mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Still Need Help?</h2>
             <p className="text-lg text-muted-foreground">
@@ -129,7 +129,8 @@ export default function Help() {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-6">
+          {/* Email Support and Live Chat - Two Columns */}
+          <div className="grid md:grid-cols-2 gap-8 max-w-2xl mx-auto mb-12">
             <Card className="hover:shadow-md transition-shadow">
               <CardHeader>
                 <Mail className="h-8 w-8 text-primary mx-auto mb-2" />
@@ -172,10 +173,11 @@ export default function Help() {
                 </Button>
               </CardContent>
             </Card>
+          </div>
 
-            <div>
-              <ContactForm />
-            </div>
+          {/* Contact Form - New Row */}
+          <div className="max-w-2xl mx-auto">
+            <ContactForm />
           </div>
         </div>
       </div>

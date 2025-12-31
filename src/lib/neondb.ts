@@ -1,25 +1,14 @@
 /**
  * NeonDB (PostgreSQL) Database Client
- * Replaces Supabase with direct PostgreSQL connection via Neon
+ * 
+ * NOTE: This file contains database helper functions that should be called
+ * from backend API endpoints, NOT directly from client-side code.
+ * 
+ * Database operations require a server-side API layer for security reasons.
+ * The client should make HTTP requests to API endpoints that use these helpers.
+ * 
+ * This file is kept for type definitions and as a reference for backend implementation.
  */
-
-import { Pool, PoolClient } from 'pg';
-
-// Environment variables
-const databaseUrl = import.meta.env.DATABASE_URL || import.meta.env.VITE_NEON_DATABASE_URL;
-
-// Create PostgreSQL connection pool
-// Note: In production, database connections should be made from backend API, not client-side
-// This allows graceful degradation if DATABASE_URL is not configured
-export const pool = databaseUrl ? new Pool({
-  connectionString: databaseUrl,
-  ssl: {
-    rejectUnauthorized: false, // Required for Neon
-  },
-  max: 20, // Maximum number of clients in the pool
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-}) : null;
 
 // Database types (matching schema)
 export interface Database {
@@ -219,433 +208,105 @@ export interface Database {
   };
 }
 
-// Helper function to check if pool is available
-const ensurePool = () => {
-  if (!pool) {
-    throw new Error('Database connection not configured. Please set DATABASE_URL environment variable.');
-  }
-  return pool;
-};
+// Error message for client-side database access attempts
+const CLIENT_SIDE_ERROR = 'Database operations cannot be performed from client-side code. Please use API endpoints instead.';
 
-// Helper functions for common database operations
+// Stub pool export (not actually used, but kept for type compatibility)
+export const pool = null;
+
+// Helper functions - These throw errors when called from client-side code
+// These should only be used from backend API endpoints
 export const dbHelpers = {
   // User operations
-  async createUserProfile(userId: string, userData: Partial<Database['public']['Tables']['users']['Insert']>) {
-    const dbPool = ensurePool();
-    const client = await dbPool.connect();
-    try {
-      const result = await client.query(
-        `INSERT INTO users (id, email, username, first_name, last_name, bio, avatar_url, website_url,
-         social_links, theme_settings, subscription_plan, is_active, email_verified, created_at, updated_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, NOW(), NOW())
-         RETURNING *`,
-        [
-          userId,
-          userData.email,
-          userData.username || null,
-          userData.first_name || null,
-          userData.last_name || null,
-          userData.bio || null,
-          userData.avatar_url || null,
-          userData.website_url || null,
-          JSON.stringify(userData.social_links || {}),
-          JSON.stringify(userData.theme_settings || {}),
-          userData.subscription_plan || 'free',
-          userData.is_active !== undefined ? userData.is_active : true,
-          userData.email_verified || false,
-        ]
-      );
-      return result.rows[0];
-    } finally {
-      client.release();
-    }
+  async createUserProfile(_userId: string, _userData: Partial<Database['public']['Tables']['users']['Insert']>) {
+    throw new Error(CLIENT_SIDE_ERROR);
   },
 
-  async updateUserProfile(userId: string, userData: Database['public']['Tables']['users']['Update']) {
-    const dbPool = ensurePool();
-    const client = await dbPool.connect();
-    try {
-      const updates: string[] = [];
-      const values: any[] = [];
-      let paramIndex = 1;
-
-      // Build dynamic UPDATE query
-      Object.entries(userData).forEach(([key, value]) => {
-        if (key !== 'id' && value !== undefined) {
-          if (key === 'social_links' || key === 'theme_settings') {
-            updates.push(`${key} = $${paramIndex}`);
-            values.push(JSON.stringify(value));
-          } else {
-            updates.push(`${key} = $${paramIndex}`);
-            values.push(value);
-          }
-          paramIndex++;
-        }
-      });
-
-      updates.push(`updated_at = NOW()`);
-      values.push(userId);
-
-      const query = `UPDATE users SET ${updates.join(', ')} WHERE id = $${paramIndex} RETURNING *`;
-      const result = await client.query(query, values);
-      return result.rows[0];
-    } finally {
-      client.release();
-    }
+  async updateUserProfile(_userId: string, _userData: Database['public']['Tables']['users']['Update']) {
+    throw new Error(CLIENT_SIDE_ERROR);
   },
 
-  async getUserProfile(userId: string) {
-    const dbPool = ensurePool();
-    const client = await dbPool.connect();
-    try {
-      const result = await client.query('SELECT * FROM users WHERE id = $1', [userId]);
-      return result.rows[0] || null;
-    } finally {
-      client.release();
-    }
+  async getUserProfile(_userId: string) {
+    throw new Error(CLIENT_SIDE_ERROR);
   },
 
-  async getUserByEmail(email: string) {
-    const dbPool = ensurePool();
-    const client = await dbPool.connect();
-    try {
-      const result = await client.query('SELECT * FROM users WHERE email = $1', [email]);
-      return result.rows[0] || null;
-    } finally {
-      client.release();
-    }
+  async getUserByEmail(_email: string) {
+    throw new Error(CLIENT_SIDE_ERROR);
   },
 
   // Product operations
-  async createProduct(productData: Database['public']['Tables']['products']['Insert']) {
-    const dbPool = ensurePool();
-    const client = await dbPool.connect();
-    try {
-      const result = await client.query(
-        `INSERT INTO products (user_id, title, description, price, currency, affiliate_url,
-         image_url, category, tags, commission_rate, rating, is_active, created_at, updated_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW(), NOW())
-         RETURNING *`,
-        [
-          productData.user_id,
-          productData.title,
-          productData.description || null,
-          productData.price || null,
-          productData.currency || 'USD',
-          productData.affiliate_url,
-          productData.image_url || null,
-          productData.category || null,
-          productData.tags || [],
-          productData.commission_rate || null,
-          productData.rating || null,
-          productData.is_active !== undefined ? productData.is_active : true,
-        ]
-      );
-      return result.rows[0];
-    } finally {
-      client.release();
-    }
+  async createProduct(_productData: Database['public']['Tables']['products']['Insert']) {
+    throw new Error(CLIENT_SIDE_ERROR);
   },
 
-  async getUserProducts(userId: string) {
-    const dbPool = ensurePool();
-    const client = await dbPool.connect();
-    try {
-      const result = await client.query(
-        'SELECT * FROM products WHERE user_id = $1 AND is_active = true ORDER BY created_at DESC',
-        [userId]
-      );
-      return result.rows;
-    } finally {
-      client.release();
-    }
+  async getUserProducts(_userId: string) {
+    throw new Error(CLIENT_SIDE_ERROR);
   },
 
-  async updateProduct(productId: string, productData: Database['public']['Tables']['products']['Update']) {
-    const dbPool = ensurePool();
-    const client = await dbPool.connect();
-    try {
-      const updates: string[] = [];
-      const values: any[] = [];
-      let paramIndex = 1;
-
-      Object.entries(productData).forEach(([key, value]) => {
-        if (key !== 'id' && value !== undefined) {
-          if (key === 'tags') {
-            updates.push(`${key} = $${paramIndex}`);
-            values.push(value);
-          } else {
-            updates.push(`${key} = $${paramIndex}`);
-            values.push(value);
-          }
-          paramIndex++;
-        }
-      });
-
-      updates.push(`updated_at = NOW()`);
-      values.push(productId);
-
-      const query = `UPDATE products SET ${updates.join(', ')} WHERE id = $${paramIndex} RETURNING *`;
-      const result = await client.query(query, values);
-      return result.rows[0];
-    } finally {
-      client.release();
-    }
+  async updateProduct(_productId: string, _productData: Database['public']['Tables']['products']['Update']) {
+    throw new Error(CLIENT_SIDE_ERROR);
   },
 
-  async deleteProduct(productId: string) {
-    const dbPool = ensurePool();
-    const client = await dbPool.connect();
-    try {
-      const result = await client.query(
-        'UPDATE products SET is_active = false WHERE id = $1 RETURNING *',
-        [productId]
-      );
-      return result.rows[0];
-    } finally {
-      client.release();
-    }
+  async deleteProduct(_productId: string) {
+    throw new Error(CLIENT_SIDE_ERROR);
   },
 
   // Analytics operations
-  async trackEvent(eventData: Database['public']['Tables']['analytics']['Insert']) {
-    const dbPool = ensurePool();
-    const client = await dbPool.connect();
-    try {
-      const result = await client.query(
-        `INSERT INTO analytics (product_id, user_id, event_type, visitor_ip, user_agent, referrer, created_at)
-         VALUES ($1, $2, $3, $4, $5, $6, NOW())
-         RETURNING *`,
-        [
-          eventData.product_id,
-          eventData.user_id,
-          eventData.event_type,
-          eventData.visitor_ip || null,
-          eventData.user_agent || null,
-          eventData.referrer || null,
-        ]
-      );
-      return result.rows[0];
-    } finally {
-      client.release();
-    }
+  async trackEvent(_eventData: Database['public']['Tables']['analytics']['Insert']) {
+    throw new Error(CLIENT_SIDE_ERROR);
   },
 
-  async getProductAnalytics(productId: string) {
-    const dbPool = ensurePool();
-    const client = await dbPool.connect();
-    try {
-      const result = await client.query(
-        `SELECT
-          event_type,
-          COUNT(*) as count,
-          DATE(created_at) as date
-         FROM analytics
-         WHERE product_id = $1
-         GROUP BY event_type, DATE(created_at)
-         ORDER BY date DESC`,
-        [productId]
-      );
-      return result.rows;
-    } finally {
-      client.release();
-    }
+  async getProductAnalytics(_productId: string) {
+    throw new Error(CLIENT_SIDE_ERROR);
   },
 
   // Affiliate ID operations
-  async createAffiliateId(affiliateData: Database['public']['Tables']['affiliate_ids']['Insert']) {
-    const dbPool = ensurePool();
-    const client = await dbPool.connect();
-    try {
-      const result = await client.query(
-        `INSERT INTO affiliate_ids (user_id, platform, affiliate_id, is_active, created_at, updated_at)
-         VALUES ($1, $2, $3, $4, NOW(), NOW())
-         ON CONFLICT (user_id, platform)
-         DO UPDATE SET affiliate_id = $3, updated_at = NOW()
-         RETURNING *`,
-        [
-          affiliateData.user_id,
-          affiliateData.platform,
-          affiliateData.affiliate_id,
-          affiliateData.is_active !== undefined ? affiliateData.is_active : true,
-        ]
-      );
-      return result.rows[0];
-    } finally {
-      client.release();
-    }
+  async createAffiliateId(_affiliateData: Database['public']['Tables']['affiliate_ids']['Insert']) {
+    throw new Error(CLIENT_SIDE_ERROR);
   },
 
-  async getUserAffiliateIds(userId: string) {
-    const dbPool = ensurePool();
-    const client = await dbPool.connect();
-    try {
-      const result = await client.query(
-        'SELECT * FROM affiliate_ids WHERE user_id = $1 AND is_active = true ORDER BY created_at DESC',
-        [userId]
-      );
-      return result.rows;
-    } finally {
-      client.release();
-    }
+  async getUserAffiliateIds(_userId: string) {
+    throw new Error(CLIENT_SIDE_ERROR);
   },
 
-  async updateAffiliateId(affiliateIdId: string, affiliateData: Database['public']['Tables']['affiliate_ids']['Update']) {
-    const dbPool = ensurePool();
-    const client = await dbPool.connect();
-    try {
-      const updates: string[] = [];
-      const values: any[] = [];
-      let paramIndex = 1;
-
-      Object.entries(affiliateData).forEach(([key, value]) => {
-        if (key !== 'id' && value !== undefined) {
-          updates.push(`${key} = $${paramIndex}`);
-          values.push(value);
-          paramIndex++;
-        }
-      });
-
-      updates.push(`updated_at = NOW()`);
-      values.push(affiliateIdId);
-
-      const query = `UPDATE affiliate_ids SET ${updates.join(', ')} WHERE id = $${paramIndex} RETURNING *`;
-      const result = await client.query(query, values);
-      return result.rows[0];
-    } finally {
-      client.release();
-    }
+  async updateAffiliateId(_affiliateIdId: string, _affiliateData: Database['public']['Tables']['affiliate_ids']['Update']) {
+    throw new Error(CLIENT_SIDE_ERROR);
   },
 
-  async getAffiliateIdByPlatform(userId: string, platform: string) {
-    const dbPool = ensurePool();
-    const client = await dbPool.connect();
-    try {
-      const result = await client.query(
-        'SELECT * FROM affiliate_ids WHERE user_id = $1 AND platform = $2 AND is_active = true',
-        [userId, platform]
-      );
-      return result.rows[0] || null;
-    } finally {
-      client.release();
-    }
+  async getAffiliateIdByPlatform(_userId: string, _platform: string) {
+    throw new Error(CLIENT_SIDE_ERROR);
   },
 
-  async deleteAffiliateId(affiliateIdId: string) {
-    const dbPool = ensurePool();
-    const client = await dbPool.connect();
-    try {
-      const result = await client.query(
-        'UPDATE affiliate_ids SET is_active = false WHERE id = $1 RETURNING *',
-        [affiliateIdId]
-      );
-      return result.rows[0] || null;
-    } finally {
-      client.release();
-    }
+  async deleteAffiliateId(_affiliateIdId: string) {
+    throw new Error(CLIENT_SIDE_ERROR);
   },
 
   // SMTP Settings operations
-  async getUserSMTPSettings(userId: string) {
-    const dbPool = ensurePool();
-    const client = await dbPool.connect();
-    try {
-      const result = await client.query(
-        'SELECT * FROM user_smtp_settings WHERE user_id = $1 ORDER BY created_at DESC',
-        [userId]
-      );
-      return result.rows;
-    } finally {
-      client.release();
-    }
+  async getUserSMTPSettings(_userId: string) {
+    throw new Error(CLIENT_SIDE_ERROR);
   },
 
-  async getActiveSMTPSetting(userId: string) {
-    const dbPool = ensurePool();
-    const client = await dbPool.connect();
-    try {
-      const result = await client.query(
-        'SELECT * FROM user_smtp_settings WHERE user_id = $1 AND is_active = true LIMIT 1',
-        [userId]
-      );
-      return result.rows[0] || null;
-    } finally {
-      client.release();
-    }
+  async getActiveSMTPSetting(_userId: string) {
+    throw new Error(CLIENT_SIDE_ERROR);
   },
 
   async createOrUpdateSMTPSetting(
-    userId: string,
-    provider: string,
-    settings: Record<string, any>,
-    fromEmail: string,
-    fromName?: string
+    _userId: string,
+    _provider: string,
+    _settings: Record<string, any>,
+    _fromEmail: string,
+    _fromName?: string
   ) {
-    const dbPool = ensurePool();
-    const client = await dbPool.connect();
-    try {
-      const result = await client.query(
-        `INSERT INTO user_smtp_settings (user_id, provider, settings, from_email, from_name, updated_at)
-         VALUES ($1, $2, $3, $4, $5, NOW())
-         ON CONFLICT (user_id, provider)
-         DO UPDATE SET 
-           settings = EXCLUDED.settings,
-           from_email = EXCLUDED.from_email,
-           from_name = EXCLUDED.from_name,
-           updated_at = NOW()
-         RETURNING *`,
-        [userId, provider, JSON.stringify(settings), fromEmail, fromName || null]
-      );
-      return result.rows[0];
-    } finally {
-      client.release();
-    }
+    throw new Error(CLIENT_SIDE_ERROR);
   },
 
-  async activateSMTPSetting(userId: string, settingId: string) {
-    const dbPool = ensurePool();
-    const client = await dbPool.connect();
-    try {
-      // First, deactivate all settings for this user
-      await client.query(
-        'UPDATE user_smtp_settings SET is_active = false WHERE user_id = $1',
-        [userId]
-      );
-      // Then activate the specified setting
-      const result = await client.query(
-        'UPDATE user_smtp_settings SET is_active = true, updated_at = NOW() WHERE id = $1 AND user_id = $2 RETURNING *',
-        [settingId, userId]
-      );
-      return result.rows[0] || null;
-    } finally {
-      client.release();
-    }
+  async activateSMTPSetting(_userId: string, _settingId: string) {
+    throw new Error(CLIENT_SIDE_ERROR);
   },
 
-  async deleteSMTPSetting(userId: string, provider: string) {
-    const dbPool = ensurePool();
-    const client = await dbPool.connect();
-    try {
-      const result = await client.query(
-        'DELETE FROM user_smtp_settings WHERE user_id = $1 AND provider = $2 RETURNING *',
-        [userId, provider]
-      );
-      return result.rows[0] || null;
-    } finally {
-      client.release();
-    }
+  async deleteSMTPSetting(_userId: string, _provider: string) {
+    throw new Error(CLIENT_SIDE_ERROR);
   },
 };
-
-// Test connection on module load (only if pool is available)
-if (pool) {
-  pool.on('connect', () => {
-    console.log('✅ Connected to NeonDB');
-  });
-
-  pool.on('error', (err) => {
-    console.error('❌ Unexpected NeonDB error:', err);
-  });
-}
 
 export default pool;
