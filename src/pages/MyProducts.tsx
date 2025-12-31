@@ -8,6 +8,7 @@ import CategoryManager from "@/components/products/CategoryManager";
 import DemoBanner from "@/components/auth/DemoBanner";
 import { toast } from "sonner";
 import { getPlanLimits, getRemainingProductSlots, getPlanDisplayName } from "@/utils/featureGating";
+import { getCategoryColors } from "@/utils/categoryColors";
 import { Crown, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -106,17 +107,30 @@ export default function MyProducts() {
           </Alert>
         )}
 
-        {/* Category Filter */}
+        {/* Category Filter with Color-coded Options */}
         <div className="mb-6">
           <Select value={selectedCategoryFilter || "all"} onValueChange={(v) => setSelectedCategoryFilter(v === "all" ? undefined : v)}>
             <SelectTrigger className="w-[250px]">
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              {categories.map(cat => (
-                <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-              ))}
+              <SelectItem value="all">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600"></div>
+                  All Categories
+                </div>
+              </SelectItem>
+              {categories.map(cat => {
+                const colors = getCategoryColors(cat, selectedCategoryFilter === cat);
+                return (
+                  <SelectItem key={cat} value={cat}>
+                    <div className="flex items-center gap-2">
+                      <div className={`w-3 h-3 rounded-full ${colors.bg.replace('bg-', 'bg-').split(' ')[0]}`}></div>
+                      {cat}
+                    </div>
+                  </SelectItem>
+                );
+              })}
             </SelectContent>
           </Select>
         </div>

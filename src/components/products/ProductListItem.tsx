@@ -3,6 +3,7 @@ import { Product } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Star } from "lucide-react";
+import { getTagColors, getCategoryBadgeColor } from "@/utils/categoryColors";
 
 interface ProductListItemProps {
   product: Product;
@@ -31,15 +32,32 @@ export default function ProductListItem({ product, onRemove }: ProductListItemPr
           </div>
           
           <div className="flex flex-wrap gap-1.5">
-            {product.tags.map(tag => (
+            {product.categories?.slice(0, 1).map(category => (
+              <Badge
+                key={category}
+                variant="secondary"
+                className={`text-xs px-2.5 py-1 rounded-full border ${getCategoryBadgeColor(category)}`}
+              >
+                {category}
+              </Badge>
+            ))}
+            {product.tags.slice(0, 3).map(tag => (
               <Badge
                 key={tag}
                 variant="secondary"
-                className="text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20 border-primary/20"
+                className={`text-xs px-2.5 py-1 rounded-full ${getTagColors(tag)}`}
               >
                 {tag}
               </Badge>
             ))}
+            {(product.tags.length > 3 || (product.categories && product.categories.length > 1)) && (
+              <Badge
+                variant="outline"
+                className="text-xs px-2.5 py-1 rounded-full text-muted-foreground"
+              >
+                +{(product.tags.length - 3) + (product.categories && product.categories.length > 1 ? product.categories.length - 1 : 0)}
+              </Badge>
+            )}
           </div>
         </div>
         

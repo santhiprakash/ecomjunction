@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Product } from "@/types";
 import { ExternalLink, Star } from "lucide-react";
+import { getTagColors, getCategoryBadgeColor } from "@/utils/categoryColors";
 
 interface ProductCardProps {
   product: Product;
@@ -51,21 +52,30 @@ export default function ProductCard({ product, onRemove }: ProductCardProps) {
         </div>
         
         <div className="mt-3 flex flex-wrap gap-1.5">
+          {product.categories?.slice(0, 1).map(category => (
+            <Badge
+              key={category}
+              variant="secondary"
+              className={`text-xs px-2.5 py-1 rounded-full border ${getCategoryBadgeColor(category)}`}
+            >
+              {category}
+            </Badge>
+          ))}
           {product.tags.slice(0, 2).map(tag => (
             <Badge
               key={tag}
               variant="secondary"
-              className="text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary hover:bg-primary/20 border-primary/20"
+              className={`text-xs px-2.5 py-1 rounded-full ${getTagColors(tag)}`}
             >
               {tag}
             </Badge>
           ))}
-          {product.tags.length > 2 && (
+          {(product.tags.length > 2 || (product.categories && product.categories.length > 1)) && (
             <Badge
               variant="outline"
               className="text-xs px-2.5 py-1 rounded-full text-muted-foreground hover:text-primary hover:border-primary/50"
             >
-              +{product.tags.length - 2}
+              +{(product.tags.length - 2) + (product.categories && product.categories.length > 1 ? product.categories.length - 1 : 0)}
             </Badge>
           )}
         </div>

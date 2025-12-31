@@ -27,6 +27,8 @@ import {
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import MinimalProductAdd from "./MinimalProductAdd";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { getCategoryBadgeColor, getTagColors } from "@/utils/categoryColors";
 
 interface SimpleProductListProps {
   products: Product[];
@@ -149,7 +151,11 @@ export default function SimpleProductList({
                       <TableCell>
                         <div className="flex flex-wrap gap-1">
                           {product.categories?.slice(0, 2).map(cat => (
-                            <Badge key={cat} variant="secondary" className="text-xs">
+                            <Badge 
+                              key={cat} 
+                              variant="secondary" 
+                              className={`text-xs border ${getCategoryBadgeColor(cat)}`}
+                            >
                               {cat}
                             </Badge>
                           ))}
