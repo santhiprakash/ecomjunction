@@ -51,6 +51,13 @@ VITE_ENV=production
 VITE_JWT_SECRET=your-secure-jwt-secret-here-minimum-32-characters
 
 # ============================================
+# GOOGLE ANALYTICS (Optional)
+# ============================================
+# Get your Measurement ID from Google Analytics 4 dashboard
+# Format: G-XXXXXXXXXX
+VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+
+# ============================================
 # OPENAI (Optional - for AI features)
 # ============================================
 # Only needed if you're using AI-powered product extraction

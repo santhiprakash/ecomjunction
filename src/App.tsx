@@ -2,13 +2,15 @@
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ProductProvider } from "@/contexts/ProductContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
 import CookieConsent from "@/components/compliance/CookieConsent";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { trackPageView } from "@/lib/analytics";
 
 // Pages
 import Index from "./pages/Index";
@@ -28,6 +30,17 @@ import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
+// Component to track page views on route changes
+function PageViewTracker() {
+  const location = useLocation();
+
+  useEffect(() => {
+    trackPageView(location.pathname + location.search);
+  }, [location]);
+
+  return null;
+}
+
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
@@ -37,6 +50,7 @@ const App = () => (
             <TooltipProvider>
               <Toaster />
               <BrowserRouter>
+              <PageViewTracker />
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/dashboard" element={
