@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useProducts } from "@/contexts/ProductContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,15 +21,18 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ProductFormData, Currency } from "@/types";
 import { toast } from "sonner";
-import { PlusCircle, X, Zap, Settings } from "lucide-react";
+import { PlusCircle, X, Zap, Settings, Crown, AlertCircle, HelpCircle } from "lucide-react";
 import { APIKeyManager } from "@/utils/apiKeyManager";
 import QuickAddForm from "./QuickAddForm";
 import APIKeySetup from "./APIKeySetup";
 import BulkProductImport from "./BulkProductImport";
 import AffiliateIdManager from "@/components/affiliate/AffiliateIdManager";
 import { AffiliateUrlService } from "@/services/AffiliateUrlService";
+import { canAddProduct, getRemainingProductSlots, getUpgradeMessage, getPlanDisplayName } from "@/utils/featureGating";
 
 const INITIAL_FORM_DATA: ProductFormData = {
   title: "",
@@ -47,7 +51,8 @@ const SAMPLE_SOURCES = ["Amazon", "Flipkart", "Myntra", "Nykaa", "Other"];
 type AddMode = 'quick' | 'advanced';
 
 export default function AddProductForm() {
-  const { addProduct, categories: existingCategories, tags: existingTags } = useProducts();
+  const { addProduct, categories: existingCategories, tags: existingTags, products } = useProducts();
+  const { user } = useAuth();
   const [formData, setFormData] = useState<ProductFormData>({ ...INITIAL_FORM_DATA });
   const [open, setOpen] = useState(false);
   const [currentTag, setCurrentTag] = useState("");
@@ -59,6 +64,11 @@ export default function AddProductForm() {
   useEffect(() => {
     setHasApiKey(APIKeyManager.hasValidKey('openai'));
   }, []);
+
+  // Check if user can add more products
+  const userPlan = user?.plan || 'free';
+  const canAdd = canAddProduct(userPlan, products.length);
+  const remainingSlots = getRemainingProductSlots(userPlan, products.length);
 
   const extractAmazonASIN = (url: string): string => {
     const asinRegex = /(?:\/dp\/|\/gp\/product\/|\/ASIN\/|\/asin\/)([A-Z0-9]{10})/i;
@@ -145,6 +155,12 @@ export default function AddProductForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Check plan limits
+    if (!canAdd) {
+      toast.error(`You've reached your product limit. ${getUpgradeMessage(userPlan, 'unlimited products')}`);
+      return;
+    }
+
     if (!formData.title || !formData.description || !formData.link || !formData.image) {
       toast.error("Please fill all required fields");
       return;
@@ -173,10 +189,23 @@ export default function AddProductForm() {
       }
 
       addProduct(finalFormData);
+      
+      toast.success("Product added successfully!", {
+        action: {
+          label: "Add Another",
+          onClick: () => {
+            setFormData({ ...INITIAL_FORM_DATA });
+            setAddMode('quick');
+            // Keep dialog open for another product
+          },
+        },
+        duration: 5000,
+      });
+      
+      // Reset form and close dialog
       setFormData({ ...INITIAL_FORM_DATA });
       setAddMode('quick');
       setOpen(false);
-      toast.success("Product added successfully!");
     } catch (error) {
       console.error('Error adding product:', error);
       toast.error("Failed to add product");
@@ -250,31 +279,55 @@ export default function AddProductForm() {
       <div aria-live="assertive" className="sr-only" id="form-error-region"></div>
       <div className="grid grid-cols-1 gap-4">
         <div className="space-y-2">
-          <label htmlFor="title" className="text-sm font-medium">
-            Product Title *
-          </label>
+          <div className="flex items-center gap-2">
+            <label htmlFor="title" className="text-sm font-medium">
+              Product Title *
+            </label>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>The name of the product as it appears on the store</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
           <Input
             id="title"
             name="title"
             value={formData.title}
             onChange={handleInputChange}
-            placeholder="Enter product title"
+            placeholder="e.g., Wireless Bluetooth Headphones"
             required
           />
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="description" className="text-sm font-medium">
-            Description *
-          </label>
+          <div className="flex items-center gap-2">
+            <label htmlFor="description" className="text-sm font-medium">
+              Description *
+            </label>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Describe the product features, benefits, and why you recommend it</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
           <Textarea
             id="description"
             name="description"
             value={formData.description}
             onChange={handleInputChange}
-            placeholder="Enter product description"
+            placeholder="e.g., High-quality wireless headphones with noise cancellation and 30-hour battery life..."
             required
+            rows={4}
           />
+          <p className="text-xs text-muted-foreground">
+            A good description helps your audience understand why you recommend this product
+          </p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -317,17 +370,30 @@ export default function AddProductForm() {
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="link" className="text-sm font-medium">
-            Affiliate Link *
-          </label>
+          <div className="flex items-center gap-2">
+            <label htmlFor="link" className="text-sm font-medium">
+              Affiliate Link *
+            </label>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>The product URL from the store. Your affiliate ID will be automatically added if configured.</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
           <Input
             id="link"
             name="link"
             value={formData.link}
             onChange={handleInputChange}
-            placeholder="Enter affiliate link URL"
+            placeholder="https://www.amazon.in/dp/..."
             required
           />
+          <p className="text-xs text-muted-foreground">
+            Paste the product URL. If you've set up affiliate IDs, they'll be added automatically.
+          </p>
         </div>
 
         <div className="space-y-2">
@@ -354,17 +420,30 @@ export default function AddProductForm() {
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="image" className="text-sm font-medium">
-            Image URL *
-          </label>
+          <div className="flex items-center gap-2">
+            <label htmlFor="image" className="text-sm font-medium">
+              Image URL *
+            </label>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <HelpCircle className="h-3 w-3 text-muted-foreground cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>The direct URL to the product image. Usually found by right-clicking the product image and selecting "Copy image address"</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
           <Input
             id="image"
             name="image"
             value={formData.image}
             onChange={handleInputChange}
-            placeholder="Enter image URL"
+            placeholder="https://example.com/product-image.jpg"
             required
           />
+          <p className="text-xs text-muted-foreground">
+            Right-click the product image on the store page and select "Copy image address"
+          </p>
         </div>
 
         <div className="space-y-2">
@@ -476,7 +555,9 @@ export default function AddProductForm() {
         <Button type="button" variant="outline" onClick={() => setOpen(false)}>
           Cancel
         </Button>
-        <Button type="submit">Add Product</Button>
+        <Button type="submit" disabled={!canAdd}>
+          Add Product
+        </Button>
       </DialogFooter>
     </form>
   );
@@ -523,6 +604,46 @@ export default function AddProductForm() {
             }
           </DialogDescription>
         </DialogHeader>
+
+        {/* Plan Limit Warning */}
+        {!canAdd && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              <div className="flex items-center justify-between">
+                <span>You've reached your product limit ({products.length} products).</span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.location.href = '/pricing'}
+                  className="ml-2"
+                >
+                  <Crown className="mr-1 h-3 w-3" />
+                  Upgrade
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
+        {canAdd && remainingSlots !== Infinity && remainingSlots <= 10 && (
+          <Alert>
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              <div className="flex items-center justify-between">
+                <span>You have {remainingSlots} product slot{remainingSlots !== 1 ? 's' : ''} remaining on your {getPlanDisplayName(userPlan)} plan.</span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.location.href = '/pricing'}
+                  className="ml-2"
+                >
+                  <Crown className="mr-1 h-3 w-3" />
+                  Upgrade
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
 
         {/* Additional Actions */}
         <div className="flex gap-2 pb-4 border-b">

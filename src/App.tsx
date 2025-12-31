@@ -7,9 +7,11 @@ import { useEffect } from "react";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ProductProvider } from "@/contexts/ProductContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { AccessibilityProvider } from "@/contexts/AccessibilityContext";
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
 import CookieConsent from "@/components/compliance/CookieConsent";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import OnboardingWizard from "@/components/onboarding/OnboardingWizard";
 import { trackPageView } from "@/lib/analytics";
 
 // Pages
@@ -27,6 +29,7 @@ import About from "./pages/About";
 import Help from "./pages/Help";
 import PrivacySettings from "./pages/PrivacySettings";
 import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -44,14 +47,16 @@ function PageViewTracker() {
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <AuthProvider>
-          <ProductProvider>
-            <TooltipProvider>
-              <Toaster />
-              <BrowserRouter>
-              <PageViewTracker />
-              <Routes>
+      <AccessibilityProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <ProductProvider>
+              <TooltipProvider>
+                <Toaster />
+                <BrowserRouter>
+                <PageViewTracker />
+                <OnboardingWizard />
+                <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/dashboard" element={
                   <ProtectedRoute>
@@ -80,6 +85,11 @@ const App = () => (
                     <Profile />
                   </ProtectedRoute>
                 } />
+                <Route path="/settings" element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                } />
                 <Route path="/terms-of-service" element={<Terms />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/cookies" element={<Cookies />} />
@@ -95,6 +105,7 @@ const App = () => (
         </ProductProvider>
       </AuthProvider>
     </ThemeProvider>
+      </AccessibilityProvider>
   </QueryClientProvider>
   </ErrorBoundary>
 );

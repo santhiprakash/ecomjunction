@@ -100,3 +100,96 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Accessibility: Font Size Classes */
+.font-size-normal {
+  font-size: 1rem;
+}
+
+.font-size-large {
+  font-size: 1.25rem;
+}
+
+.font-size-large input,
+.font-size-large textarea,
+.font-size-large select,
+.font-size-large button {
+  font-size: 1.25rem;
+  min-height: 44px; /* Ensure adequate touch targets */
+}
+
+.font-size-extra-large {
+  font-size: 1.5rem;
+}
+
+.font-size-extra-large input,
+.font-size-extra-large textarea,
+.font-size-extra-large select,
+.font-size-extra-large button {
+  font-size: 1.5rem;
+  min-height: 48px; /* Larger touch targets for extra large */
+}
+
+/* Accessibility: High Contrast Mode */
+.high-contrast {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 0%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 0%;
+  --primary: 0 0% 0%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 0 0% 90%;
+  --secondary-foreground: 0 0% 0%;
+  --muted: 0 0% 95%;
+  --muted-foreground: 0 0% 0%;
+  --accent: 0 0% 85%;
+  --accent-foreground: 0 0% 0%;
+  --border: 0 0% 0%;
+  --input: 0 0% 0%;
+  --ring: 0 0% 0%;
+}
+
+.high-contrast.dark {
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --card: 0 0% 0%;
+  --card-foreground: 0 0% 100%;
+  --primary: 0 0% 100%;
+  --primary-foreground: 0 0% 0%;
+  --secondary: 0 0% 20%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 100%;
+  --accent: 0 0% 25%;
+  --accent-foreground: 0 0% 100%;
+  --border: 0 0% 100%;
+  --input: 0 0% 100%;
+  --ring: 0 0% 100%;
+}
+
+/* Accessibility: Reduced Motion */
+.reduced-motion *,
+.reduced-motion *::before,
+.reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Ensure minimum touch target sizes */
+button,
+a,
+input[type="button"],
+input[type="submit"],
+input[type="checkbox"],
+input[type="radio"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Improve focus visibility */
+*:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}

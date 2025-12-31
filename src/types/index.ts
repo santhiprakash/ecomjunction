@@ -14,13 +14,25 @@ export interface Product {
   createdAt: Date;
 }
 
+export type SubscriptionPlan = 'free' | 'pro' | 'enterprise';
+
 export interface User {
   id: string;
   name: string;
   email: string;
   image?: string;
-  username: string;
+  username?: string;
+  avatar?: string;
+  plan: SubscriptionPlan;
   createdAt: Date;
+  lastLoginAt?: Date;
+  isDemo?: boolean;
+  // Additional fields from database schema
+  bio?: string;
+  websiteUrl?: string;
+  socialLinks?: Record<string, string>;
+  themeSettings?: Record<string, any>;
+  emailVerified?: boolean;
 }
 
 export interface ThemeSettings {
@@ -45,7 +57,7 @@ export interface ProductFormData {
   categories: string[];
 }
 
-export type ViewMode = "grid" | "list";
+export type ViewMode = "grid" | "list" | "table";
 export type SortOption = "newest" | "price-low-high" | "price-high-low" | "rating";
 
 export interface FilterOptions {

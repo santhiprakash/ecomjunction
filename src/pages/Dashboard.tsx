@@ -3,9 +3,15 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ThemeCustomizer from "@/components/theme/ThemeCustomizer";
 import DemoBanner from "@/components/auth/DemoBanner";
+import AddProductForm from "@/components/products/AddProductForm";
+import AffiliateIdManager from "@/components/affiliate/AffiliateIdManager";
 import { useProducts } from "@/contexts/ProductContext";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAuth } from "@/contexts/AuthContext";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { PlusCircle, Link2, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import {
   PieChart,
@@ -18,6 +24,10 @@ import {
 
 export default function Dashboard() {
   const { products, categories, tags } = useProducts();
+  const { user } = useAuth();
+  
+  // Check if user is new (has less than 3 products)
+  const isNewUser = products.length < 3;
 
   const categoryCounts = categories.map((category) => ({
     name: category,
@@ -86,6 +96,89 @@ export default function Dashboard() {
             <ThemeCustomizer />
           </div>
         </div>
+
+        {/* Getting Started Section for New Users */}
+        {isNewUser && (
+          <Card className="mb-8 border-blue-200 dark:border-blue-800 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5 text-blue-600" />
+                Getting Started
+              </CardTitle>
+              <CardDescription>
+                Complete these steps to set up your product showcase
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className={`p-4 rounded-lg border-2 ${products.length > 0 ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : 'border-gray-200 dark:border-gray-700'}`}>
+                  <div className="flex items-start gap-3">
+                    {products.length > 0 ? (
+                      <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                    ) : (
+                      <div className="h-5 w-5 rounded-full border-2 border-gray-400 mt-0.5 flex-shrink-0" />
+                    )}
+                    <div className="flex-1">
+                      <h3 className="font-semibold mb-1">Add Your First Product</h3>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        {products.length > 0 
+                          ? `Great! You've added ${products.length} product${products.length !== 1 ? 's' : ''}.`
+                          : 'Start by adding your first affiliate product to your showcase.'
+                        }
+                      </p>
+                      {products.length === 0 && (
+                        <AddProductForm />
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-lg border-2 border-gray-200 dark:border-gray-700">
+                  <div className="flex items-start gap-3">
+                    <div className="h-5 w-5 rounded-full border-2 border-gray-400 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1">
+                      <h3 className="font-semibold mb-1">Set Up Affiliate IDs</h3>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Add your affiliate IDs to automatically apply them to product links.
+                      </p>
+                      <AffiliateIdManager />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-lg border-2 border-gray-200 dark:border-gray-700">
+                  <div className="flex items-start gap-3">
+                    <div className="h-5 w-5 rounded-full border-2 border-gray-400 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1">
+                      <h3 className="font-semibold mb-1">Customize Your Theme</h3>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Personalize your showcase page with custom colors.
+                      </p>
+                      <ThemeCustomizer />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-6 border-t">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium">Ready to share your showcase?</p>
+                    <p className="text-xs text-muted-foreground">
+                      Visit your profile page to see your public showcase URL
+                    </p>
+                  </div>
+                  <Button asChild variant="outline">
+                    <Link to="/profile">
+                      View Profile
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
         
         <div className="grid gap-4 md:grid-cols-3">
           <Card>

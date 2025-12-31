@@ -24,6 +24,8 @@ type ProductContextType = {
   setSearchQuery: (query: string) => void;
   categories: string[];
   tags: string[];
+  addCategory: (category: string) => void;
+  removeCategory: (category: string) => void;
 };
 
 const defaultFilterOptions: FilterOptions = {
@@ -51,9 +53,38 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
     localStorage.setItem("shopmatic-products", JSON.stringify(products));
   }, [products]);
 
-  // Get all unique categories and tags
-  const categories = Array.from(new Set(products.flatMap(p => p.categories)));
-  const tags = Array.from(new Set(products.flatMap(p => p.tags)));
+  // Get all unique categories and tags from products
+  const productCategories = Array.from(new Set(products.flatMap(p => p.categories)));
+  const productTags = Array.from(new Set(products.flatMap(p => p.tags)));
+  
+  // Store custom categories separately (in real app, this would be in database)
+  const [customCategories, setCustomCategories] = useState<string[]>(() => {
+    const saved = localStorage.getItem("shopmatic-custom-categories");
+    return saved ? JSON.parse(saved) : [];
+  });
+  
+  // Combine product categories with custom categories
+  const categories = Array.from(new Set([...productCategories, ...customCategories]));
+  const tags = productTags;
+  
+  // Save custom categories to localStorage
+  useEffect(() => {
+    localStorage.setItem("shopmatic-custom-categories", JSON.stringify(customCategories));
+  }, [customCategories]);
+  
+  const addCategory = (category: string) => {
+    if (!customCategories.includes(category)) {
+      setCustomCategories(prev => [...prev, category]);
+    }
+  };
+  
+  const removeCategory = (category: string) => {
+    // Only remove if no products are using it
+    const productsUsingCategory = products.filter(p => p.categories?.includes(category));
+    if (productsUsingCategory.length === 0) {
+      setCustomCategories(prev => prev.filter(c => c !== category));
+    }
+  };
 
   // Apply filters and sorting to products
   const filteredProducts = products
@@ -165,6 +196,8 @@ export const ProductProvider = ({ children }: { children: React.ReactNode }) => 
         setSearchQuery,
         categories,
         tags,
+        addCategory,
+        removeCategory,
       }}
     >
       {children}

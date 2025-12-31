@@ -30,11 +30,10 @@ import {
 import { Sun, Moon, User, Settings, BarChart, ShoppingBag, Menu, Crown, Sparkles, Share2 } from "lucide-react";
 
 export default function Header() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<'login' | 'register'>('login');
-  const { resetTheme } = useTheme();
+  const { resetTheme, darkMode, toggleDarkMode } = useTheme();
   const { user, isAuthenticated, logout, isDemo } = useAuth();
 
   // Add scroll effect for header
@@ -46,11 +45,6 @@ export default function Header() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle("dark");
-  };
 
   return (
     <header className={`sticky top-0 z-50 w-full backdrop-blur-lg transition-all ${
@@ -138,8 +132,8 @@ export default function Header() {
         </NavigationMenu>
 
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={toggleDarkMode} className="rounded-full">
-            {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          <Button variant="ghost" size="icon" onClick={toggleDarkMode} className="rounded-full" title={darkMode ? "Switch to light mode" : "Switch to dark mode"}>
+            {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>
 
           {/* User menu dropdown */}
@@ -188,21 +182,17 @@ export default function Header() {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem className="cursor-pointer" asChild>
-                    <Link to="/my-products">
-                      <ShoppingBag className="mr-2 h-4 w-4" />
-                      <span>My Products</span>
+                    <Link to="/settings">
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Settings</span>
                     </Link>
                   </DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem className="cursor-pointer" asChild>
                     <Link to="/analytics">
                       <BarChart className="mr-2 h-4 w-4" />
                       <span>Analytics</span>
                     </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="cursor-pointer">
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem className="cursor-pointer" onClick={resetTheme}>
                     <Sun className="mr-2 h-4 w-4" />
