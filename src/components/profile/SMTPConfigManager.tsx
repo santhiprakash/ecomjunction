@@ -13,7 +13,7 @@ import { Mail, Lock, Server, Send, AlertCircle, CheckCircle2, Crown, Save } from
 
 interface SMTPSetting {
   id: string;
-  provider: 'custom' | 'resend' | 'sendgrid';
+  provider: 'custom' | 'resend' | 'sendgrid' | 'emailit';
   settings: Record<string, any>;
   from_email: string;
   from_name?: string;
@@ -24,7 +24,7 @@ export default function SMTPConfigManager() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [settings, setSettings] = useState<SMTPSetting[]>([]);
-  const [activeTab, setActiveTab] = useState<'custom' | 'resend' | 'sendgrid'>('custom');
+  const [activeTab, setActiveTab] = useState<'custom' | 'resend' | 'sendgrid' | 'emailit'>('custom');
 
   // Custom SMTP form state
   const [customSMTP, setCustomSMTP] = useState({
@@ -46,6 +46,13 @@ export default function SMTPConfigManager() {
 
   // SendGrid form state
   const [sendgridSMTP, setSendgridSMTP] = useState({
+    api_key: '',
+    from_email: '',
+    from_name: '',
+  });
+
+  // EmailIT form state
+  const [emailitSMTP, setEmailitSMTP] = useState({
     api_key: '',
     from_email: '',
     from_name: '',
@@ -84,6 +91,12 @@ export default function SMTPConfigManager() {
           });
         } else if (setting.provider === 'sendgrid') {
           setSendgridSMTP({
+            api_key: formSettings.api_key || '',
+            from_email: setting.from_email || '',
+            from_name: setting.from_name || '',
+          });
+        } else if (setting.provider === 'emailit') {
+          setEmailitSMTP({
             api_key: formSettings.api_key || '',
             from_email: setting.from_email || '',
             from_name: setting.from_name || '',
@@ -183,6 +196,34 @@ export default function SMTPConfigManager() {
     }
   };
 
+  const handleSaveEmailit = async () => {
+    if (!user) return;
+    if (!emailitSMTP.api_key || !emailitSMTP.from_email) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await dbHelpers.createOrUpdateSMTPSetting(
+        user.id,
+        'emailit',
+        {
+          api_key: emailitSMTP.api_key,
+        },
+        emailitSMTP.from_email,
+        emailitSMTP.from_name
+      );
+      toast.success('EmailIT settings saved successfully');
+      await loadSettings();
+    } catch (error) {
+      console.error('Failed to save EmailIT settings:', error);
+      toast.error('Failed to save settings');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleActivate = async (settingId: string) => {
     if (!user) return;
     try {
@@ -258,10 +299,11 @@ export default function SMTPConfigManager() {
         )}
 
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="custom">Custom SMTP</TabsTrigger>
             <TabsTrigger value="resend">Resend</TabsTrigger>
             <TabsTrigger value="sendgrid">SendGrid</TabsTrigger>
+            <TabsTrigger value="emailit">EmailIT</TabsTrigger>
           </TabsList>
 
           <TabsContent value="custom" className="space-y-4 mt-4">
@@ -440,6 +482,54 @@ export default function SMTPConfigManager() {
               <Button onClick={handleSaveSendgrid} disabled={loading} className="w-full">
                 <Save className="h-4 w-4 mr-2" />
                 Save SendGrid Settings
+              </Button>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="emailit" className="space-y-4 mt-4">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="emailit_api_key">API Key *</Label>
+                <Input
+                  id="emailit_api_key"
+                  type="password"
+                  placeholder="eit_xxxxxxxxxxxx"
+                  value={emailitSMTP.api_key}
+                  onChange={(e) => setEmailitSMTP({ ...emailitSMTP, api_key: e.target.value })}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Get your API key from{' '}
+                  <a href="https://emailit.com/settings/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                    EmailIT API Keys
+                  </a>
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="from_email_emailit">From Email *</Label>
+                  <Input
+                    id="from_email_emailit"
+                    type="email"
+                    placeholder="noreply@example.com"
+                    value={emailitSMTP.from_email}
+                    onChange={(e) => setEmailitSMTP({ ...emailitSMTP, from_email: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="from_name_emailit">From Name</Label>
+                  <Input
+                    id="from_name_emailit"
+                    placeholder="Your Name"
+                    value={emailitSMTP.from_name}
+                    onChange={(e) => setEmailitSMTP({ ...emailitSMTP, from_name: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <Button onClick={handleSaveEmailit} disabled={loading} className="w-full">
+                <Save className="h-4 w-4 mr-2" />
+                Save EmailIT Settings
               </Button>
             </div>
           </TabsContent>

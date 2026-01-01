@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { SecurityUtils } from '@/utils/security';
 import { toast } from 'sonner';
+import { UserRole } from '@/types';
 
 export interface User {
   id: string;
@@ -8,6 +9,7 @@ export interface User {
   name: string;
   avatar?: string;
   plan: 'free' | 'pro' | 'enterprise';
+  role: UserRole;
   createdAt: Date;
   lastLoginAt: Date;
   isDemo?: boolean;
@@ -38,6 +40,7 @@ const DEMO_USER: User = {
   name: 'Demo User',
   avatar: undefined,
   plan: 'pro',
+  role: 'affiliate_marketer',
   createdAt: new Date('2024-01-01'),
   lastLoginAt: new Date(),
   isDemo: true,
@@ -51,6 +54,7 @@ const MOCK_USERS = [
     password: 'password123', // In real app, this would be hashed
     name: 'John Doe',
     plan: 'free' as const,
+    role: 'affiliate_marketer' as const,
     createdAt: new Date('2024-01-01'),
     lastLoginAt: new Date(),
   },
@@ -60,6 +64,17 @@ const MOCK_USERS = [
     password: 'password123',
     name: 'Jane Smith',
     plan: 'pro' as const,
+    role: 'affiliate_marketer' as const,
+    createdAt: new Date('2024-01-01'),
+    lastLoginAt: new Date(),
+  },
+  {
+    id: 'admin-1',
+    email: 'admin@ecomjunction.com',
+    password: 'admin123',
+    name: 'Admin User',
+    plan: 'enterprise' as const,
+    role: 'admin' as const,
     createdAt: new Date('2024-01-01'),
     lastLoginAt: new Date(),
   },
@@ -168,6 +183,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         email: mockUser.email,
         name: mockUser.name,
         plan: mockUser.plan,
+        role: mockUser.role,
         createdAt: mockUser.createdAt,
         lastLoginAt: new Date(),
         isDemo: false,
@@ -210,6 +226,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         email,
         name,
         plan: 'free',
+        role: 'affiliate_marketer', // Default role for new users
         createdAt: new Date(),
         lastLoginAt: new Date(),
         isDemo: false,
@@ -222,6 +239,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         password, // Would be hashed in real app
         name,
         plan: 'free',
+        role: 'affiliate_marketer',
         createdAt: newUser.createdAt,
         lastLoginAt: newUser.lastLoginAt,
       });

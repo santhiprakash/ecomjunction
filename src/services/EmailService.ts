@@ -163,6 +163,44 @@ class EmailService {
   }
 
   /**
+   * Send team invitation email
+   */
+  async sendTeamInvitation(
+    inviteeEmail: string,
+    inviterName: string,
+    pageName: string,
+    role: string,
+    invitationToken: string,
+    personalMessage?: string
+  ): Promise<EmailResponse> {
+    const invitationUrl = `${import.meta.env.VITE_PRODUCTION_URL || 'https://shopmatic.cc'}/accept-invitation/${invitationToken}`;
+    const unsubscribeUrl = `${import.meta.env.VITE_PRODUCTION_URL || 'https://shopmatic.cc'}/unsubscribe?email=${encodeURIComponent(inviteeEmail)}`;
+
+    const html = this.getTeamInvitationTemplate(
+      inviterName,
+      pageName,
+      role,
+      invitationUrl,
+      personalMessage,
+      unsubscribeUrl
+    );
+    const text = this.getTeamInvitationText(
+      inviterName,
+      pageName,
+      role,
+      invitationUrl,
+      personalMessage
+    );
+
+    return this.sendEmail({
+      to: { email: inviteeEmail },
+      subject: `${inviterName} invited you to collaborate on "${pageName}"`,
+      html,
+      text,
+    });
+  }
+
+  /**
    * Welcome Email HTML Template (CAN-SPAM Compliant)
    */
   private getWelcomeEmailTemplate(userName: string, unsubscribeUrl: string): string {
@@ -548,6 +586,241 @@ shopmatic.cc
 
 You're receiving this weekly analytics report because you have an active Shopmatic account.
 Unsubscribe: https://shopmatic.cc/unsubscribe
+
+© ${new Date().getFullYear()} Shopmatic. All rights reserved.`;
+  }
+
+  /**
+   * Team Invitation Email HTML Template
+   */
+  private getTeamInvitationTemplate(
+    inviterName: string,
+    pageName: string,
+    role: string,
+    invitationUrl: string,
+    personalMessage: string | undefined,
+    unsubscribeUrl: string
+  ): string {
+    const roleDescriptions: Record<string, string> = {
+      admin: 'Full page management and team control',
+      editor: 'Add, edit, and delete products',
+      viewer: 'View-only access to analytics',
+    };
+
+    const roleDescription = roleDescriptions[role.toLowerCase()] || 'Collaborate on this page';
+
+    return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Invitation</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
+  <table role="presentation" style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <td align="center" style="padding: 40px 0;">
+        <table role="presentation" style="width: 600px; max-width: 100%; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center; border-radius: 8px 8px 0 0;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 700;">Shopmatic</h1>
+              <p style="margin: 10px 0 0; color: #e6e6ff; font-size: 16px;">Team Collaboration</p>
+            </td>
+          </tr>
+
+          <!-- Content -->
+          <tr>
+            <td style="padding: 40px 30px;">
+              <h2 style="margin: 0 0 20px; color: #333333; font-size: 24px;">You're Invited! 🎉</h2>
+
+              <p style="margin: 0 0 15px; color: #666666; font-size: 16px; line-height: 1.6;">
+                <strong>${inviterName}</strong> has invited you to join their team as a <strong style="color: #667eea;">${role.charAt(0).toUpperCase() + role.slice(1)}</strong> on the page:
+              </p>
+
+              <div style="padding: 20px; background-color: #f8f9fa; border-left: 4px solid #667eea; margin: 20px 0;">
+                <p style="margin: 0; color: #333333; font-size: 18px; font-weight: 600;">${pageName}</p>
+                <p style="margin: 8px 0 0; color: #666666; font-size: 14px;">${roleDescription}</p>
+              </div>
+
+              ${personalMessage ? `
+              <div style="padding: 15px; background-color: #fff8e1; border-left: 4px solid #ffc107; margin: 20px 0;">
+                <p style="margin: 0 0 5px; color: #856404; font-size: 12px; font-weight: 600; text-transform: uppercase;">Personal Message</p>
+                <p style="margin: 0; color: #666666; font-size: 14px; line-height: 1.6; font-style: italic;">"${personalMessage}"</p>
+              </div>
+              ` : ''}
+
+              <p style="margin: 25px 0 15px; color: #666666; font-size: 16px; line-height: 1.6;">
+                As a <strong>${role}</strong>, you'll be able to:
+              </p>
+
+              <table role="presentation" style="width: 100%; margin-bottom: 25px;">
+                ${role === 'admin' ? `
+                <tr>
+                  <td style="padding: 12px; background-color: #f8f9fa;">
+                    <span style="color: #10b981; font-size: 16px; margin-right: 8px;">✓</span>
+                    <span style="color: #333333; font-size: 14px;">Edit page settings and theme</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px; background-color: #ffffff;">
+                    <span style="color: #10b981; font-size: 16px; margin-right: 8px;">✓</span>
+                    <span style="color: #333333; font-size: 14px;">Add, edit, and delete products</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px; background-color: #f8f9fa;">
+                    <span style="color: #10b981; font-size: 16px; margin-right: 8px;">✓</span>
+                    <span style="color: #333333; font-size: 14px;">View analytics and insights</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px; background-color: #ffffff;">
+                    <span style="color: #10b981; font-size: 16px; margin-right: 8px;">✓</span>
+                    <span style="color: #333333; font-size: 14px;">Invite and manage team members</span>
+                  </td>
+                </tr>
+                ` : role === 'editor' ? `
+                <tr>
+                  <td style="padding: 12px; background-color: #f8f9fa;">
+                    <span style="color: #10b981; font-size: 16px; margin-right: 8px;">✓</span>
+                    <span style="color: #333333; font-size: 14px;">Add new products to the page</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px; background-color: #ffffff;">
+                    <span style="color: #10b981; font-size: 16px; margin-right: 8px;">✓</span>
+                    <span style="color: #333333; font-size: 14px;">Edit and update product listings</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px; background-color: #f8f9fa;">
+                    <span style="color: #10b981; font-size: 16px; margin-right: 8px;">✓</span>
+                    <span style="color: #333333; font-size: 14px;">Delete products from the page</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px; background-color: #ffffff;">
+                    <span style="color: #10b981; font-size: 16px; margin-right: 8px;">✓</span>
+                    <span style="color: #333333; font-size: 14px;">View analytics and performance data</span>
+                  </td>
+                </tr>
+                ` : `
+                <tr>
+                  <td style="padding: 12px; background-color: #f8f9fa;">
+                    <span style="color: #10b981; font-size: 16px; margin-right: 8px;">✓</span>
+                    <span style="color: #333333; font-size: 14px;">View page analytics</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px; background-color: #ffffff;">
+                    <span style="color: #10b981; font-size: 16px; margin-right: 8px;">✓</span>
+                    <span style="color: #333333; font-size: 14px;">Preview the page</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px; background-color: #f8f9fa;">
+                    <span style="color: #10b981; font-size: 16px; margin-right: 8px;">✓</span>
+                    <span style="color: #333333; font-size: 14px;">View performance insights</span>
+                  </td>
+                </tr>
+                `}
+              </table>
+
+              <table role="presentation" style="margin: 30px 0;">
+                <tr>
+                  <td style="text-align: center;">
+                    <a href="${invitationUrl}" style="display: inline-block; padding: 14px 30px; background-color: #667eea; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Accept Invitation</a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin: 25px 0 15px; color: #666666; font-size: 14px; line-height: 1.6;">
+                If the button doesn't work, copy and paste this link into your browser:
+              </p>
+
+              <p style="margin: 0 0 25px; padding: 15px; background-color: #f8f9fa; color: #667eea; font-size: 12px; word-break: break-all; border-radius: 4px;">
+                ${invitationUrl}
+              </p>
+
+              <div style="padding: 15px; background-color: #fff3cd; border-left: 4px solid #ffc107; margin-bottom: 20px;">
+                <p style="margin: 0; color: #856404; font-size: 14px; line-height: 1.6;">
+                  <strong>⏱️ Note:</strong> This invitation will expire in 7 days. If you didn't expect this invitation, you can safely ignore this email.
+                </p>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Footer (CAN-SPAM Compliance) -->
+          <tr>
+            <td style="padding: 30px; background-color: #f8f9fa; border-top: 1px solid #e0e0e0; border-radius: 0 0 8px 8px;">
+              <p style="margin: 0 0 10px; color: #999999; font-size: 12px; line-height: 1.5;">
+                <strong>Shopmatic</strong><br>
+                notifications@shopmatic.cc<br>
+                shopmatic.cc
+              </p>
+
+              <p style="margin: 15px 0 0; color: #999999; font-size: 11px; line-height: 1.5;">
+                This is a team invitation email sent on behalf of ${inviterName}.
+                You're receiving this because someone invited you to collaborate on their Shopmatic page.
+              </p>
+
+              <p style="margin: 10px 0 0; color: #999999; font-size: 11px;">
+                <a href="${unsubscribeUrl}" style="color: #667eea; text-decoration: underline;">Unsubscribe from marketing emails</a> |
+                <a href="https://shopmatic.cc/privacy" style="color: #667eea; text-decoration: underline;">Privacy Policy</a>
+              </p>
+
+              <p style="margin: 15px 0 0; color: #999999; font-size: 11px; line-height: 1.5;">
+                © ${new Date().getFullYear()} Shopmatic. All rights reserved.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+  }
+
+  /**
+   * Team Invitation Email Plain Text Version
+   */
+  private getTeamInvitationText(
+    inviterName: string,
+    pageName: string,
+    role: string,
+    invitationUrl: string,
+    personalMessage: string | undefined
+  ): string {
+    const roleDescriptions: Record<string, string> = {
+      admin: 'Full page management and team control',
+      editor: 'Add, edit, and delete products',
+      viewer: 'View-only access to analytics',
+    };
+
+    const roleDescription = roleDescriptions[role.toLowerCase()] || 'Collaborate on this page';
+
+    return `You're Invited to Collaborate!
+
+${inviterName} has invited you to join their team as a ${role.charAt(0).toUpperCase() + role.slice(1)} on the page: "${pageName}"
+
+Role: ${role.charAt(0).toUpperCase() + role.slice(1)}
+${roleDescription}
+${personalMessage ? `\nPersonal Message:\n"${personalMessage}"\n` : ''}
+Accept the invitation:
+${invitationUrl}
+
+NOTE: This invitation will expire in 7 days. If you didn't expect this invitation, you can safely ignore this email.
+
+---
+Shopmatic
+notifications@shopmatic.cc
+shopmatic.cc
+
+This is a team invitation email sent on behalf of ${inviterName}.
 
 © ${new Date().getFullYear()} Shopmatic. All rights reserved.`;
   }

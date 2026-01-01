@@ -26,15 +26,22 @@ The development server runs on port 8080 (not the default 5173) as configured in
 - **State Management**: React Context (ProductContext, ThemeContext)
 - **Data Fetching**: TanStack Query
 - **Routing**: React Router v6
+- **Database**: NeonDB (PostgreSQL) - accessed via backend API only
+- **Storage**: Cloudflare R2 (configured for file uploads)
+- **Email**: Dynamic SMTP (EmailIT, Resend, SendGrid, Custom SMTP)
+- **Analytics**: Google Analytics 4 (GA4)
+- **Security**: Cloudflare Turnstile (spam protection)
 - **AI Integration**: OpenAI GPT-4o-mini for product extraction
 
 ### Key Architecture Patterns
 
 #### Context-Based State Management
+- **AuthContext**: Handles user authentication, sessions, roles, and demo mode
+- **PageContext**: Manages shareable pages, collaboration, and team members
 - **ProductContext**: Manages product data, filtering, sorting, and CRUD operations
 - **ThemeContext**: Handles theme customization with CSS variable updates
-- **AuthContext**: Handles user authentication, sessions, and demo mode
 - Products are persisted in localStorage with key "shopmatic-products"
+- Pages and collaborators persisted per user with key "pages_{userId}"
 - Theme settings are persisted in localStorage with key "shopmatic-theme"
 - Authentication sessions are encrypted and stored with key "shopmatic_auth"
 
@@ -65,6 +72,28 @@ The development server runs on port 8080 (not the default 5173) as configured in
 - Tailwind CSS with custom CSS variables for theming
 - Theme colors are dynamically converted from hex to HSL and applied as CSS variables
 - Custom theme system allows real-time color customization
+
+### Database & Infrastructure
+
+**Database**: NeonDB (PostgreSQL)
+- **Access Pattern**: Backend API endpoints only (client-side DB access is blocked for security)
+- **Type Safety**: Full TypeScript types in src/lib/neondb.ts
+- **Security**: Client-side helpers throw errors to prevent direct database access
+- **Backend API**: RESTful endpoints handle all database operations
+
+**SMTP Configuration**:
+- **Per-User Settings**: Each user configures their preferred email provider in Settings
+- **Supported Providers**: EmailIT, Resend, SendGrid, Custom SMTP
+- **Storage**: SMTP settings stored in database (smtp_settings table)
+- **UI**: SMTPConfigManager component in Settings page
+
+**Storage**:
+- **Cloudflare R2**: File uploads and media storage (configured)
+- **localStorage**: Temporary client-side data (products, pages - migration to API in progress)
+
+**Analytics & Security**:
+- **Google Analytics**: GA4 integration via `VITE_GA_MEASUREMENT_ID`
+- **Cloudflare Turnstile**: Bot protection and spam prevention
 
 ## Key Features
 
@@ -152,4 +181,136 @@ The development server runs on port 8080 (not the default 5173) as configured in
 ### Demo Login Credentials
 - **Email**: user@example.com or pro@example.com
 - **Password**: password123
+- **Admin**: admin@ecomjunction.com / admin123
 - **Demo Mode**: Click "Demo Login" for instant access without account creation
+
+### Role-Based Access Control (RBAC)
+- **Platform Roles**: Define user's global permissions
+  - `admin` - Platform administrator with full system access
+  - `affiliate_marketer` - Content creators who create pages and products
+  - `end_user` - Anonymous visitors browsing public pages
+- **Page Roles**: Define permissions per page (collaboration system)
+  - `owner` - Page creator with full control including deletion
+  - `admin` - Full page management except deletion
+  - `editor` - Manage products only (add/edit/delete)
+  - `viewer` - Read-only analytics access
+- **Permission System**: src/utils/permissions.ts for platform roles, src/utils/pagePermissions.ts for page roles
+- **Role Guards**: RoleGuard component protects routes by role/permission
+
+## Collaboration System
+
+### Overview
+The platform supports team collaboration at the page level. Page owners can invite team members with different roles to help manage their pages.
+
+### Architecture
+- **Two-Tier Role System**:
+  - Platform Role: Who you are globally (affiliate_marketer, admin, end_user)
+  - Page Role: What you can do on a specific page (owner, admin, editor, viewer)
+- **Per-Page Teams**: Each page can have its own team with role-based permissions
+- **Plan-Based Limits**: Team size limits based on subscription plan
+- **Backend API Architecture**: NeonDB (PostgreSQL) with RESTful API endpoints
+- **Email Notifications**: Dynamic SMTP configuration (EmailIT, Resend, SendGrid, Custom SMTP)
+
+### Page Roles & Permissions
+
+| Permission | Owner | Admin | Editor | Viewer |
+|------------|-------|-------|--------|--------|
+| Edit Page Settings | ✅ | ✅ | ❌ | ❌ |
+| Delete Page | ✅ | ❌ | ❌ | ❌ |
+| Add Products | ✅ | ✅ | ✅ | ❌ |
+| Edit Products | ✅ | ✅ | ✅ | ❌ |
+| Delete Products | ✅ | ✅ | ✅ | ❌ |
+| View Analytics | ✅ | ✅ | ✅ | ✅ |
+| Invite Members | ✅ | ✅ | ❌ | ❌ |
+| Remove Members | ✅ | ✅ | ❌ | ❌ |
+| Change Roles | ✅ | ✅ | ❌ | ❌ |
+
+### Team Limits by Plan
+- **Free Plan**: 0 team members (solo only)
+- **Pro Plan**: 3 team members per page
+- **Enterprise Plan**: Unlimited team members per page
+
+### Database Tables
+- `pages` - Shareable page metadata and settings
+- `page_products` - Junction table for page-product relationships
+- `page_collaborators` - Team members and their roles per page
+- `page_invitations` - Pending email invitations with secure tokens
+- `team_member_limits` - Track team size and limits per page
+- `activity_log` - Audit trail for collaboration activities
+
+### Key Features
+- **Email-Based Invitations**: Secure token-based invitation system
+- **Role Management**: Change member roles dynamically
+- **Activity Logging**: Complete audit trail of team changes
+- **Auto-Initialization**: Owner automatically added when page is created
+- **Plan Enforcement**: Team size limits enforced by subscription plan
+- **Smart Validation**: Prevent duplicate invitations, invalid roles, etc.
+
+### API Layer
+- **CollaborationService** (src/services/CollaborationService.ts):
+  - Client-side service that communicates with backend API
+  - Page CRUD operations via REST endpoints
+  - Collaborator management (add, update, remove)
+  - Invitation lifecycle (create, accept, cancel)
+  - Team limits queries
+  - **NO DIRECT DATABASE ACCESS** - All operations go through backend
+
+- **EmailServiceNew** (src/services/EmailServiceNew.ts):
+  - Dynamic SMTP configuration per user
+  - Supports 4 providers: EmailIT, Resend, SendGrid, Custom SMTP
+  - Team invitation emails with role descriptions
+  - CAN-SPAM compliant templates
+  - 5-minute caching for SMTP settings
+
+- **NeonDB Integration** (src/lib/neondb.ts):
+  - Type definitions for database schema
+  - Client-side helpers throw security errors (prevent direct DB access)
+  - Actual database operations performed by backend API
+
+- **Backend API Endpoints** (to be implemented):
+  ```
+  POST   /api/pages
+  GET    /api/pages?userId=:userId
+  GET    /api/pages/:pageId
+  PATCH  /api/pages/:pageId
+  DELETE /api/pages/:pageId
+  GET    /api/pages/:pageId/collaborators
+  POST   /api/pages/:pageId/collaborators
+  PATCH  /api/collaborators/:collaboratorId/role
+  DELETE /api/collaborators/:collaboratorId
+  POST   /api/pages/:pageId/invitations
+  GET    /api/pages/:pageId/invitations
+  GET    /api/invitations/:token
+  POST   /api/invitations/:token/accept
+  DELETE /api/invitations/:invitationId
+  GET    /api/pages/:pageId/team-limits
+  GET    /api/smtp-settings/:userId/active
+  ```
+
+### Context Management
+- **PageContext**: Manages pages and collaboration (src/contexts/PageContext.tsx)
+  - `getCollaborators(pageId)` - Get all team members for a page
+  - `inviteMember(pageId, {email, role})` - Send invitation
+  - `removeMember(pageId, collaboratorId)` - Remove team member
+  - `updateMemberRole(pageId, collaboratorId, newRole)` - Change role
+  - `acceptInvitation(token)` - Accept invitation via token
+  - `getUserRole(pageId)` - Get current user's role on a page
+  - `canInviteMembers(pageId)` - Check invitation permission
+
+### Invitation Flow
+1. Owner/Admin invites member via email
+2. System generates secure token (32 chars, 7-day expiration)
+3. Invitation stored in `page_invitations` table
+4. Email sent with invitation link (future: email service)
+5. Recipient logs in and accepts invitation via token
+6. User added to `page_collaborators` with specified role
+7. Team member count updated automatically
+
+### Security Features
+- Secure random token generation (Web Crypto API)
+- Invitation expiration (7 days default)
+- Email validation (must match invitation email)
+- Permission checks for all operations
+- Cannot invite as owner (owner is creator only)
+- Cannot change owner role
+- Activity logging for audit trails

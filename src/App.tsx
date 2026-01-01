@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ProductProvider } from "@/contexts/ProductContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { PageProvider } from "@/contexts/PageContext";
 import { AccessibilityProvider } from "@/contexts/AccessibilityContext";
 import ErrorBoundary from "@/components/layout/ErrorBoundary";
 import CookieConsent from "@/components/compliance/CookieConsent";
@@ -51,13 +52,14 @@ const App = () => (
       <AccessibilityProvider>
         <ThemeProvider>
           <AuthProvider>
-            <ProductProvider>
-              <TooltipProvider>
-                <Toaster />
-                <BrowserRouter>
-                <PageViewTracker />
-                <OnboardingWizard />
-                <Routes>
+            <PageProvider>
+              <ProductProvider>
+                <TooltipProvider>
+                  <Toaster />
+                  <BrowserRouter>
+                  <PageViewTracker />
+                  <OnboardingWizard />
+                  <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/dashboard" element={
                   <ProtectedRoute>
@@ -101,6 +103,7 @@ const App = () => (
             </BrowserRouter>
           </TooltipProvider>
         </ProductProvider>
+      </PageProvider>
       </AuthProvider>
     </ThemeProvider>
       </AccessibilityProvider>
