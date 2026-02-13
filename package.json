@@ -13,11 +13,14 @@
     "db:setup": "npm run db:migrate && npm run db:seed"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.37.3",
     "@neondatabase/serverless": "^1.0.2",
     "dotenv": "^17.2.4",
     "next": "16.1.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "svix": "^1.85.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
